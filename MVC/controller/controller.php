@@ -1,7 +1,7 @@
 <?php
 require_once('MVC/model/model.php');
 
-//----------------------------------------------------- call to views ----------------------------------------------------------------------
+//----------------------------------------------------- call views ----------------------------------------------------------------------
 function get_header()
 {
     require('MVC\view\header.php');
@@ -20,6 +20,10 @@ function get_register()
 }
 function get_register_validation() {
     require('MVC\view\register_validation.php');
+}
+function get_tournamentsList() {
+    $tournamentsList = get_tournamentsAll();
+    require('MVC\view\tournamentsList.php');
 }
 //-------------------------------------------------------- others ----------------------------------------------------------------------
 function register()

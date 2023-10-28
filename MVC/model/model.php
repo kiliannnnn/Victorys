@@ -40,6 +40,15 @@ function get_userByNameOrMail($usernameOrEmail) {
 
 	return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+
+
+function get_tournamentsAll()
+{
+	$pdo = dbconnect();
+	$users_result = $pdo->query('SELECT * FROM TOURNAMENTS;');
+	return $users_result;
+}
 ?>
 
 <!-- /*-----------------------------------*/

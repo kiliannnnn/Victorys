@@ -16,7 +16,13 @@ require('MVC/controller/controller.php');
 
 <body>
     <?php get_header();?>
+    <?php echo '--------------------------- tournaments list -----------------------------'?>
+    <?php get_tournamentsList();?>
+    <?php echo '--------------------------- register -----------------------------'?>
+    <?php get_register();?>
+    <?php echo '--------------------------- login -----------------------------'?>
     <?php get_login();?>
+    <?php echo '--------------------------------------------------------'?>
     <?php get_footer();?>
 </body>
 
