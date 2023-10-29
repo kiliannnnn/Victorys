@@ -18,12 +18,18 @@ function get_register()
 {
     require('MVC\view\register.php');
 }
-function get_register_validation() {
+function get_register_validation()
+{
     require('MVC\view\register_validation.php');
 }
-function get_tournamentsList() {
+function get_tournamentsList()
+{
     $tournamentsList = get_tournamentsAll();
     require('MVC\view\tournamentsList.php');
+}
+function get_matchTest()
+{
+    require('MVC\view\matchTest.php');
 }
 //-------------------------------------------------------- others ----------------------------------------------------------------------
 function register()
@@ -39,33 +45,33 @@ function register()
 
     if ($result == true) {
         get_register_validation();
-    }
-    else {
+    } else {
         $registerError = "Erreur lors de l'inscription";
         get_register();
     }
 }
-function login() {
+function login()
+{
     $usernameOrEmail = $_POST['usernameOrEmail'];
     $password = $_POST['password'];
 
     $usernameOrEmail = filter_var($usernameOrEmail, FILTER_SANITIZE_STRING);
 
-	$user = get_userByNameOrMail($usernameOrEmail);
+    $user = get_userByNameOrMail($usernameOrEmail);
 
-	if ($user) {
+    if ($user) {
         if (password_verify($password, $user['password'])) {
             session_start();
             $_SESSION['user_id'] = $user['id_user'];
-			echo 'Welcome ' . $user['username'] . ' !';
+            echo 'Welcome ' . $user['username'] . ' !';
             return true;
         } else {
-			$loginError = "Incorrect password";
+            $loginError = "Incorrect password";
             get_login();
             return false;
         }
     } else {
-		$loginError = "User not found";
+        $loginError = "User not found";
         get_login();
         return false;
     }
