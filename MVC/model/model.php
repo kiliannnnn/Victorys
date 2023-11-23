@@ -4,10 +4,20 @@ require_once('MVC/model/dbconnect.php');
 function get_usersAll()
 {
 	$pdo = dbconnect();
-	$users_result = $pdo->query('SELECT * FROM USERS;');
-	return $users_result;
+	$result = $pdo->query('SELECT * FROM USERS;');
+	return $result;
 }
 function get_userByID($id)
+{
+	$pdo = dbconnect();
+	$request = $pdo->prepare('SELECT * FROM users WHERE id_user = :id_user;');
+	$request->bindParam(':id_user', $id, PDO::PARAM_STR);
+    $request->execute();
+
+	return $request->fetch(PDO::FETCH_ASSOC);
+}
+
+function exist_userByID($id)
 {
 	$pdo = dbconnect();
 	$request = $pdo->prepare('SELECT * FROM users WHERE id_user = :id_user;');

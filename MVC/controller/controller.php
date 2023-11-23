@@ -61,9 +61,8 @@ function login()
 
     if ($user) {
         if (password_verify($password, $user['password'])) {
-            session_start();
             $_SESSION['user_id'] = $user['id_user'];
-            echo 'Welcome ' . $user['username'] . ' !';
+            echo 'Welcome ' . $user['username'] . ' !<br>';
             return true;
         } else {
             $loginError = "Incorrect password";
@@ -75,6 +74,44 @@ function login()
         get_login();
         return false;
     }
+}
+
+function logout()
+{
+    session_destroy();
+    echo 'You have been disconnected';
+}
+
+function start_match($j1, $j2) {
+	$pdo = dbconnect();
+	$request = $pdo->prepare('
+		INSERT INTO duel(id_j1, id_j2, date) 
+		VALUES(:id_joueur1, :id_joueur2, NOW());
+		');
+	$result = $request->execute(array('id_joueur1' => $j1, 'id_joueur2' => $j2));
+	$j1_data = get_userByID($j1);
+    foreach ($j1_data as $key => $value) {
+        echo $key . ' : ' . $value . '<br>';
+    }
+    $j2_data = get_userByID($j2);
+    foreach ($j2_data as $key => $value) {
+        echo $key . ' : ' . $value . '<br>';
+    }
+
+    if (isset($_SESSION)) {
+        if ($j1 == $_SESSION['user_id']) {
+            echo 'You are player 1';
+        } else if ($j2 == $_SESSION['user_id']) {
+            echo 'You are player 2';
+        } else {
+            echo 'You are not in this match';
+        }
+    }
+    else {
+        echo 'You are not connected <br>';
+    
+    }
+	return $result;
 }
 
 ?>

@@ -1,5 +1,6 @@
 <?php
 require('MVC/controller/controller.php');
+session_start();
 
 ?>
 
@@ -16,15 +17,10 @@ require('MVC/controller/controller.php');
 
 <body>
     <?php get_header();?>
-    <?php echo '--------------------------- match test -----------------------------'?>
     <?php get_matchTest();?>
-    <?php echo '--------------------------- tournaments list -----------------------------'?>
     <?php get_tournamentsList();?>
-    <?php echo '--------------------------- register -----------------------------'?>
     <?php get_register();?>
-    <?php echo '--------------------------- login -----------------------------'?>
     <?php get_login();?>
-    <?php echo '--------------------------------------------------------'?>
     <?php get_footer();?>
 </body>
 

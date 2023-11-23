@@ -1,4 +1,6 @@
 <?php
+echo '--------------------------- tournaments list -----------------------------<br>';
+
 if (isset($tournamentsList)) {
     foreach ($tournamentsList as $tournament) {
         echo "<button onclick='openNewWindow()'>", $tournament[0],"</button><br>";
