@@ -25,9 +25,4 @@ else {
     <?php
 }
 
-function register_for_match()
-{
-    echo "You have been registered for the match. Waiting for another player...";
-}
-
 ?>

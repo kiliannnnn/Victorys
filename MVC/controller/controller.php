@@ -83,6 +83,11 @@ function logout()
 }
 
 function start_match($j1, $j2) {
+    if (!isset($_SESSION['user_id'])) {
+    }
+    else {
+        $j1 = $_SESSION['user_id'];
+    }
 	$pdo = dbconnect();
 	$request = $pdo->prepare('
 		INSERT INTO duel(id_j1, id_j2, date) 
@@ -98,7 +103,7 @@ function start_match($j1, $j2) {
         echo $key . ' : ' . $value . '<br>';
     }
 
-    if (isset($_SESSION)) {
+    if (isset($_SESSION['user_id'])) {
         if ($j1 == $_SESSION['user_id']) {
             echo 'You are player 1';
         } else if ($j2 == $_SESSION['user_id']) {

@@ -16,12 +16,12 @@ session_start();
 </head>
 
 <body>
-    <?php get_header();?>
-    <?php get_matchTest();?>
-    <?php get_tournamentsList();?>
-    <?php get_register();?>
-    <?php get_login();?>
-    <?php get_footer();?>
+    <?php get_header(); ?>
+    <?php get_matchTest(); ?>
+    <?php get_tournamentsList(); ?>
+    <?php get_register(); ?>
+    <?php get_login(); ?>
+    <?php get_footer(); ?>
 </body>
 
 </html>
