@@ -1,0 +1,87 @@
+victorys globalement
+	page web responsive
+	système de compte
+	système de tournois
+		gestion victoires/défaites
+		gestion abandon/AFK
+
+
+si wordpress {
+	theme perso
+	plugins perso
+}
+autrement {
+	mobile first
+	modèle mvc
+	scss
+}
+
+
+page principale (menu et nav = récurrent)
+page accueil/tableau de bord selon si co ou non
+page login
+page création de compte
+page gestion de compte
+page historique tournois
+page tournois en cours
+
+
+user scenario :
+en tant qu'utilisateur je veux
+	-me créer un compte
+	-me connecter
+	-acheter des tickets
+	-participer à un tournois
+	-consulter les informations des tournois passés et à venirs
+en tant qu'admin je veux :
+	-modérer des comptes (ban temp, ban def)
+	-gérer les tournois (créer, modifier)
+
+
+Data needed
+utilisateurs
+	-username
+	-password
+	-civilité
+	-email / phone
+	-pays
+tournois
+	-dates et heures
+	-prix d'entrée
+	-rewards
+	-capacité de participants
+	-récurrence
+	-classement
+	-statut (en cours/cloturé/débute dans j:h:m:s)
+	-accesibilité (ouvert/fermé)
+
+
+
+A voir :
+api rocket league: https://www.npmjs.com/package/trn-rocket-league?activeTab=readme
+
+
+Register.php
+check if username/email/phone already exists
+check password by entering it 2 times
+
+
+gérer tournois (créer, modifier, suppr, etc)
+lancer tournois (connecté)
+cheminement :
+	cliquer sur le tournoi
+	cliquer sur s'inscrire
+	patienter le temps que 
+		assez de joueurs rejoignent
+		le tournoi commence à l'heure indiqué
+	lorsque le tournoi est prêt
+		préparer les rencontres
+	lancer le premier round
+
+matchTest
+cliquer sur le bouton pour s'inscire au prochain match
+vérifier si un autre joueur est dispo
+sinon alors attendre
+lancer la rencontre
+	partager les informations des joueurs pour qu'ils lancent le match dans le jeu
+
