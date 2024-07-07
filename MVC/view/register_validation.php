@@ -1,1 +1,0 @@
-<p>Compte créé avec succès</p>
