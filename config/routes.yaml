@@ -9,3 +9,11 @@ login:
 register:
   path: /register
   controller: App\Controller\DefaultController::register
+
+logout:
+  path: /logout
+  controller: App\Controller\DefaultController::logout
+
+app_404:
+  path: /404
+  controller: App\Controller\ErrorController::show

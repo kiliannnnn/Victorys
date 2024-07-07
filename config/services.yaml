@@ -1,0 +1,16 @@
+# config/services.yaml
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Services are private by default.
+
+    # Makes the ExceptionListener a service
+    App\EventListener\ExceptionListener:
+        arguments:
+            $router: '@router'
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
+    # you can put other service definitions here too

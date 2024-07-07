@@ -1,5 +1,6 @@
 <?php
 require_once '..\src\database\DAO\UserDAO.php';
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +23,6 @@ require_once '..\src\database\DAO\UserDAO.php';
         if (!empty($input) && !empty($password)) {
             $user = $userDao->getUserByUsernameOrEmail($input, $input);
             if ($user && password_verify($password, $user['password'])) {
-                session_start();
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 var_dump($_SESSION['user_id']);
@@ -36,10 +36,10 @@ require_once '..\src\database\DAO\UserDAO.php';
     }
     ?>
     <div class="min-h-screen bg-zinc-100 dark:bg-zinc-850 flex items-center justify-center">
-        <div class="w-full max-w-md p-6 bg-white dark:bg-zinc-700 dark:text-white shadow-md rounded-lg">
-            <?php
-            if (!isset($_SESSION['user_id'])) {
-                ?>
+        <?php
+        if (!isset($_SESSION['user_id'])) {
+            ?>
+            <div class="w-full max-w-md p-6 bg-white dark:bg-zinc-700 dark:text-white shadow-md rounded-lg">
                 <h1 class="text-3xl font-bold mb-4 text-center dark:text-white">Login</h1>
                 <form class="flex flex-col space-y-4" action="login" method="post">
                     <input type="text" placeholder="Username or email" name="input"
@@ -57,17 +57,19 @@ require_once '..\src\database\DAO\UserDAO.php';
                 <div class="text-center mt-4">
                     <a href="#" class="underline text-sm dark:text-zinc-200">Forgot your password?</a>
                 </div>
-                <?php
-            } else {
-                ?>
-                <h1 class="text-3xl font-bold mb-4 text-center dark:text-white">You are already logged in.</h1>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="w-full max-w-md p-6 bg-white dark:bg-zinc-700 dark:text-white shadow-md rounded-lg flex flex-col items-center">
+                <h1 class="text-3xl font-bold mb-4 text-center dark:text-white">You are logged in.</h1>
                 <a href="/"
                     class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Go
                     back home</a>
-                <?php
-            }
-            ?>
-        </div>
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <script>
         if (localStorage.getItem('theme') === 'dark') {
