@@ -11,7 +11,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Victorys - Home</title>
     <link rel="stylesheet" type="text/css" href="/styles/tailwind.css">
-    <!-- <script src="public/scripts/firebase"></script> -->
+    <script type="script" src="../src/scripts/firebase.js"></script>
 </head>
 
 <body>
