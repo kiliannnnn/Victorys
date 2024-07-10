@@ -1,4 +1,4 @@
-// Compte de service Firebase
+// Firebase service account
 // firebase-adminsdk-e3s9u@victorys-428bc.iam.gserviceaccount.com
 
 // Import the functions you need from the SDKs you need
@@ -24,8 +24,8 @@ const firebaseConfig = {
 };
 
 window.onload = function(){
-  console.log("zzzz");
-};
+  console.log('firebase.js');
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -40,12 +40,12 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-// async function getCities(db) {
-//   const citiesCol = collection(db, 'cities');
-//   const citySnapshot = await getDocs(citiesCol);
-//   const cityList = citySnapshot.docs.map(doc => doc.data());
-//   return cityList;
-// }
+async function getCities(db) {
+  const citiesCol = collection(db, 'cities');
+  const citySnapshot = await getDocs(citiesCol);
+  const cityList = citySnapshot.docs.map(doc => doc.data());
+  return cityList;
+}
 
 
 // window.onload = function(){

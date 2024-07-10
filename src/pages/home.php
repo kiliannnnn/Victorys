@@ -11,7 +11,6 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Victorys - Home</title>
     <link rel="stylesheet" type="text/css" href="/styles/tailwind.css">
-    <script type="script" src="../src/scripts/firebase.js"></script>
 </head>
 
 <body>
@@ -73,6 +72,8 @@ session_start();
     </div>
 
     <?php include 'C:\wamp64\www\victorys\src\components\footer.php'; ?>
+    <script type='module' src='index.js'></script>
+    <script src="dist/bundle.js"></script>
 </body>
 
 </html>
