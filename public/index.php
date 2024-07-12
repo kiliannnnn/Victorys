@@ -43,3 +43,5 @@ $response->send();
 $kernel->terminate($request, $response);
 
 ?>
+
+<script src="bundle.js"></script>

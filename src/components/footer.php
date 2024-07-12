@@ -38,18 +38,3 @@
         <p class="text-center text-sm pt-4 pb-2">&copy; 2024 Victorys. All rights reserved.</p>
     </div>
 </div>
-
-<script>
-    const profileButton = document.getElementById('profileDropdown');
-    const profileMenu = document.getElementById('profileDropdownMenu');
-
-    profileButton.addEventListener('click', () => {
-        profileMenu.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', (event) => {
-        if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
-            profileMenu.classList.add('hidden');
-        }
-    });
-</script>

@@ -65,4 +65,15 @@ class DefaultController
         $content = ob_get_clean();
         return new Response($content);
     }
+
+    /**
+     * @Route("/chatbox", name="chatbox")
+     */
+    public function chatbox(): Response
+    {
+        ob_start();
+        include __DIR__ . '/../pages/chatbox.php';
+        $content = ob_get_clean();
+        return new Response($content);
+    }
 }

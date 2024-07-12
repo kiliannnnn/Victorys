@@ -1,5 +1,5 @@
 <?php
-require_once '..\src\database\DAO\UserDAO.php';
+require_once '..\src\database\DAO\User.php';
 session_start();
 ?>
 

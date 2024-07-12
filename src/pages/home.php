@@ -1,6 +1,7 @@
 <?php
-require_once 'C:\wamp64\www\victorys\src/database/DAO.php';
+require_once '..\src\database\DAO\User.php';
 session_start();
+$userdao = new UserDAO();
 ?>
 
 <!DOCTYPE html>
@@ -56,15 +57,18 @@ session_start();
                         <tr>
                             <th scope="col" class="px-6 py-3">Rank</th>
                             <th scope="col" class="px-6 py-3">Player</th>
-                            <th scope="col" class="px-6 py-3">Points</th>
+                            <th scope="col" class="px-6 py-3">Tokens</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white dark:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-700">
-                            <td scope="row" class="px-6 py-4 font-medium whitespace-nowrap">1</td>
-                            <td class="px-6 py-4">John Doe</td>
-                            <td class="px-6 py-4">500</td>
-                        </tr>
+                        <?php $leaderboard = $userdao->getLeaderboard(); 
+                        foreach ($leaderboard as $rank => $player) { ?>
+                            <tr class="bg-white dark:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-700">
+                                <td scope="row" class="px-6 py-4 font-medium whitespace-nowrap"><?= $rank + 1 ?></td>
+                                <td class="px-6 py-4"><?= $player->getUsername() ?></td>
+                                <td class="px-6 py-4"><?= $player->getToken() ?></td>
+                            </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
@@ -72,8 +76,6 @@ session_start();
     </div>
 
     <?php include 'C:\wamp64\www\victorys\src\components\footer.php'; ?>
-    <script type='module' src='index.js'></script>
-    <script src="dist/bundle.js"></script>
 </body>
 
 </html>

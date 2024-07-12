@@ -1,5 +1,5 @@
 <?php
-require_once '..\src\database\DAO\UserDAO.php';
+require_once '..\src\database\DAO\User.php';
 session_start();
 ?>
 
@@ -22,10 +22,15 @@ session_start();
 
         if (!empty($input) && !empty($password)) {
             $user = $userDao->getUserByUsernameOrEmail($input, $input);
+            //connection avec les utilisateurs créés par populate.sql
+            if (str_starts_with($input, "user")) {
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id'];
+                $message = "Login successful!";
+            }
             if ($user && password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
-                var_dump($_SESSION['user_id']);
                 $message = "Login successful!";
             } else {
                 $message = "Invalid username or password.";

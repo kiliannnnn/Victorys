@@ -1,12 +1,14 @@
 <?php
-require_once '..\src\database\DAO\UserDAO.php';
+require_once '..\src\database\DAO\User.php';
 $userDao = new UserDAO();
 ?>
-<header class="flex items-center justify-between p-4 bg-white dark:bg-zinc-800">
-    <div class="flex items-center">
-        <img src="https://placehold.co/50x50" alt="Logo" class="h-10 mr-2" />
-        <h1 class="text-xl text-zinc-700 dark:text-white font-semibold">Victorys</h1>
-    </div>
+<header class="flex items-center justify-between p-4 bg-zinc-200 dark:bg-zinc-800">
+    <a href="/">
+        <div class="flex items-center">
+            <img src="https://placehold.co/50x50" alt="Logo" class="h-10 mr-2" />
+            <h1 class="text-xl text-zinc-700 dark:text-white font-semibold">Victorys</h1>
+        </div>
+    </a>
 
     <nav class="flex space-x-4">
         <a href="#" class="p-2 rounded text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700">Home</a>
@@ -41,6 +43,9 @@ $userDao = new UserDAO();
                     <a href="/profile"
                         class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
                         role="menuitem">Profile</a>
+                    <a href="/chatbox"
+                        class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                        role="menuitem">Chatbox</a>
                     <a href="/settings"
                         class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
                         role="menuitem">Settings</a>
@@ -76,4 +81,19 @@ $userDao = new UserDAO();
         const isDarkMode = document.documentElement.classList.contains('dark');
         localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }
+</script>
+
+<script>
+    const profileButton = document.getElementById('profileDropdown');
+    const profileMenu = document.getElementById('profileDropdownMenu');
+
+    profileButton.addEventListener('click', () => {
+        profileMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.add('hidden');
+        }
+    });
 </script>

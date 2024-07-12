@@ -1,5 +1,5 @@
 <?php
-class DAO {
+abstract class DAO {
     private $host = "localhost";
     private $username = "root";
     private $password = "";
@@ -19,7 +19,9 @@ class DAO {
     }
 
     public function __destruct() {
-        $this->connection->close();
+        if ($this->connection) {
+            $this->connection->close();
+        }
     }
 }
 ?>
