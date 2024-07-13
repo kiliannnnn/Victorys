@@ -1,0 +1,15 @@
+.sender {
+    float: right;
+}
+
+.receiver {
+    float: left;
+}
+
+#friendList > :first-child > button {
+    border-radius: 10px 10px 0 0;
+}
+
+#friendList > :nth-last-child(2) > button {
+    border-radius: 0 0 10px 10px;
+}

@@ -1,29 +1,17 @@
-import app from './firebase-config';
+import app from '../config/firebase-config';
+import { get, query, onValue } from "firebase/database"
+import { collection, addDoc, getDocs } from 'firebase/firestore/lite'; 
 
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { } from 'firebase/database';
-import { } from "firebase/firestore";
-import { } from 'firebase/auth';
-
-const analytics = getAnalytics(app);
-const db = getFirestore(app);
-
-// var admin = require("firebase-admin");
-var serviceAccount = require("../config/victorys-428bc-firebase-adminsdk-e3s9u-474570dec3.json");
-console.log(serviceAccount);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-async function getCities(db) {
-  const citiesCol = collection(db, 'cities');
-  const citySnapshot = await getDocs(citiesCol);
-  const cityList = citySnapshot.docs.map(doc => doc.data());
-  return cityList;
-}
-
+// try {
+//   const docRef = await addDoc(collection(firestore, "users"), {
+//     first: "Ada",
+//     last: "Lovelace",
+//     born: 1815
+//   });
+//   console.log("Document written with ID: ", docRef.id);
+// } catch (e) {
+//   console.error("Error adding document: ", e);
+// }
 
 // window.onload = function(){
 //   class MEME_CHAT{

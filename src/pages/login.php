@@ -32,6 +32,8 @@ session_start();
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $message = "Login successful!";
+                header('Location: /');
+                exit();
             } else {
                 $message = "Invalid username or password.";
             }
@@ -59,14 +61,17 @@ session_start();
                 <?php if (isset($message))
                     echo "<p>$message</p>";
                 ?>
-                <div class="text-center mt-4">
+                <div class="text-center mt-4 flex justify-between">
+                    <a href="/register" class="underline text-sm dark:text-zinc-200"> Don't have an account ?</a>
+                    <br>
                     <a href="#" class="underline text-sm dark:text-zinc-200">Forgot your password?</a>
                 </div>
             </div>
             <?php
         } else {
             ?>
-            <div class="w-full max-w-md p-6 bg-white dark:bg-zinc-700 dark:text-white shadow-md rounded-lg flex flex-col items-center">
+            <div
+                class="w-full max-w-md p-6 bg-white dark:bg-zinc-700 dark:text-white shadow-md rounded-lg flex flex-col items-center">
                 <h1 class="text-3xl font-bold mb-4 text-center dark:text-white">You are logged in.</h1>
                 <a href="/"
                     class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Go

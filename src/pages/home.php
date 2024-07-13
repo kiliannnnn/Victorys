@@ -79,5 +79,3 @@ $userdao = new UserDAO();
 </body>
 
 </html>
-
-<!-- if (isset($_SESSION['user_id'])) { -->
