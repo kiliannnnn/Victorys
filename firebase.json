@@ -1,9 +1,0 @@
-{
-  "database": {
-    "rules": "config/database.rules.json"
-  },
-  "firestore": {
-    "rules": "config/firestore.rules",
-    "indexes": "config/firestore.indexes.json"
-  }
-}

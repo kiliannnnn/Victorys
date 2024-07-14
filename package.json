@@ -1,27 +1,27 @@
 {
-  "name": "victorys",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "tailwind": "npx tailwindcss -i ./node_modules/tailwindcss/tailwind.css -o ./public/styles/tailwind.css --watch",
-    "start": "webpack serve --open",
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "firebase": "^10.12.3",
-    "tailwindcss": "^3.4.4"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.24.8",
-    "@babel/preset-env": "^7.24.8",
-    "babel-loader": "^9.1.3",
-    "webpack": "^5.93.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4"
-  }
+	"name": "victorys",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"autoprefixer": "^10.4.19",
+		"postcss": "^8.4.39",
+		"svelte": "^4.2.7",
+		"tailwindcss": "^3.4.4",
+		"vite": "^5.0.3"
+	},
+	"type": "module",
+	"dependencies": {
+		"firebase": "^10.12.3",
+		"mysql2": "^3.10.2",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.37.3"
+	}
 }
