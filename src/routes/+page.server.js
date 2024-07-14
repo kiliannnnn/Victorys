@@ -7,17 +7,3 @@ export async function load() {
         users: users.map(user => user.get({ plain: true })),
 	};
 }
-
-async function joinQueue() {
-    const response = await fetch('/api/join-queue', {
-        method: 'POST',
-        body: JSON.stringify({ userId }),
-        headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    
-    if (data.duelId) {
-        // Redirect to duel page
-        goto(`/duel/${data.duelId}`);
-    }
-}

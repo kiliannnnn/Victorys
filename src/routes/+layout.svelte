@@ -6,8 +6,6 @@
     import { browser } from "$app/environment";
     import Header from "$lib/Header.svelte";
     import Footer from "$lib/Footer.svelte";
-    import joinQueue from "$lib/joinQueue.svelte";
-    import JoinQueue from "../lib/joinQueue.svelte";
 
     let user = writable(null);
 

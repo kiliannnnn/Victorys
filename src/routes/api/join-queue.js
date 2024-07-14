@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import Duel from '$lib/server/models/duel.js';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import db from '$lib/firebaseConfig.js';
+import db from '$lib/firebaseConfig.';
 
 const waitingQueue = [];
 

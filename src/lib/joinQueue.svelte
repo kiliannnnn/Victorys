@@ -10,7 +10,6 @@
         const data = await response.json();
 
         if (data.duelId) {
-            // Redirect to duel page
             goto(`/duel/${data.duelId}`);
         }
     }
