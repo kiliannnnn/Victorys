@@ -1,6 +1,7 @@
 <script context="module">
-  import { doc, getDoc, onSnapshot } from 'firebase/firestore';
   import db from '$lib/firebaseConfig';
+  import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+  import { onMount } from 'svelte';
 
   export async function load({ params }) {
     const duelId = params.duelId;
@@ -25,9 +26,7 @@
 <script>
   export let duelId;
   export let initialDuelData;
-
-  import { onMount } from 'svelte';
-
+  
   let duelData = initialDuelData;
   let messages = [];
 
@@ -49,7 +48,7 @@
     if (duelData.status === 'in progress') {
       await addDoc(collection(db, 'duels', duelId, 'messages'), {
         message: messageContent,
-        sender: userId, // Assume userId is available from auth logic
+        sender: userId,
         timestamp: serverTimestamp()
       });
       messageContent = '';

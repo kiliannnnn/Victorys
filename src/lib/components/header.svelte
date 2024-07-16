@@ -4,50 +4,51 @@
     import { writable } from 'svelte/store';
     import { onAuthStateChanged } from 'firebase/auth';
     import { browser } from '$app/environment';
+    import Logout from "$lib/components/logout.svelte";
   
     export let user = null;
     const showDropdown = writable(false);
     const isDarkMode = writable(false);
   
     const toggleDropdown = () => {
-      showDropdown.update(n => !n);
+        showDropdown.update(n => !n);
     };
   
     const closeDropdown = () => {
-      showDropdown.set(false);
+        showDropdown.set(false);
     };
 
     const toggleDarkMode = () => {
-      isDarkMode.update(n => !n);
-      if (browser) {
-        document.documentElement.classList.toggle('dark', $isDarkMode);
-        localStorage.setItem('theme', $isDarkMode ? 'dark' : 'light');
-      }
+        isDarkMode.update(n => !n);
+        if (browser) {
+            document.documentElement.classList.toggle('dark', $isDarkMode);
+            localStorage.setItem('theme', $isDarkMode ? 'dark' : 'light');
+        }
     };
   
     if (browser) {
-      onMount(() => {
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-          isDarkMode.set(true);
-        } else {
-          document.documentElement.classList.remove('dark');
-          isDarkMode.set(false);
-        }
-      });
+        onMount(() => {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                isDarkMode.set(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                isDarkMode.set(false);
+            }
+        });
   
-      onAuthStateChanged(auth, (firebaseUser) => {
-        user = firebaseUser ? firebaseUser : null;
-      });
+        onAuthStateChanged(auth, (firebaseUser) => {
+            user = firebaseUser ? firebaseUser : null;
+        });
   
-      document.addEventListener('click', (event) => {
-        const profileButton = document.getElementById('profileDropdown');
-        const profileMenu = document.getElementById('profileDropdownMenu');
-        if (profileButton && profileMenu && !profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
-          closeDropdown();
-        }
-      });
+        document.addEventListener('click', (event) => {
+            const profileButton = document.getElementById('profileDropdown');
+            const profileMenu = document.getElementById('profileDropdownMenu');
+            if (profileButton && profileMenu && !profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+                closeDropdown();
+            }
+        });
     }
 </script>
   
@@ -85,7 +86,7 @@
             <a href="/profile" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Profile</a>
             <a href="/chatbox" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Chatbox</a>
             <a href="/settings" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Settings</a>
-            <a href="/logout" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Logout</a>
+            <Logout />
           {:else}
             <a href="/login" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Login</a>
             <a href="/register" class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700" role="menuitem">Register</a>

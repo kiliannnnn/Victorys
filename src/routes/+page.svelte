@@ -1,7 +1,7 @@
-<script lang="ts">
-    import JoinQueue from "$lib/joinQueue.svelte";
+<script>
+  import JoinQueue from "$lib/components/joinQueue.svelte";
 
-    export let data;
+  export let data;
 </script>
 
 <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
