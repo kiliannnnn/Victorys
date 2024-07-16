@@ -1,6 +1,4 @@
 <script>
-  import JoinQueue from "$lib/components/joinQueue.svelte";
-
   export let data;
 </script>
 
@@ -32,7 +30,6 @@
       <div>
         <h3 class="text-xl font-bold">League of Legends</h3>
         <p class="text-zinc-600 dark:text-zinc-400">Compete in the most popular MOBA.</p>
-        <JoinQueue />
       </div>
     </div>
   </div>
@@ -59,4 +56,3 @@
     </table>
   </div>
 </div>
-  
