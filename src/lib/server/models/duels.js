@@ -41,14 +41,14 @@ const Duel = sequelize.define('Duel', {
         type: DataTypes.ENUM('pending', 'in progress', 'completed', 'cancelled'),
         allowNull: false,
     },
-    created_at: {
-        type: DataTypes.TIMESTAMP,
+    createdAt: {
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
 }, {
     sequelize,
-    tableName: 'users',
-    timestamps: false,
+    tableName: 'duels',
+    timestamps: true,
 });
 
 export default Duel;

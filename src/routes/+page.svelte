@@ -1,5 +1,54 @@
 <script>
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { auth } from "$lib/firebaseConfig";
+  import { onAuthStateChanged, getIdToken } from "firebase/auth";
+  import { userStore } from "$lib/stores";
+  import { get } from 'svelte/store';
+
+  export let user = null;
+  userStore.subscribe(value => user = value);
+
+  onMount(() => {
+    if (!user) {
+      onAuthStateChanged(auth, (currentUser) => {
+        if (currentUser) {
+          userStore.set(currentUser);
+        } else {
+          console.error("User not authenticated");
+        }
+      });
+    }
+  });
   export let data;
+
+  async function joinQueue() {
+    const currentUser = get(userStore);
+
+    if (!user) {
+      console.error("User ID not available");
+      return;
+    }
+    const idToken = await getIdToken(currentUser);
+
+    const response = await fetch("/duel", {
+      method: "POST",
+      body: JSON.stringify({ user }),
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`
+      },
+      body: JSON.stringify({ userId: currentUser.uid }),
+    });
+
+    const data = await response.json();
+
+    if (data.duelId) {
+      goto(`/duel/${data.duelId}`);
+    } else {
+      console.error("Failed to join the queue");
+    }
+  }
 </script>
 
 <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
@@ -30,6 +79,7 @@
       <div>
         <h3 class="text-xl font-bold">League of Legends</h3>
         <p class="text-zinc-600 dark:text-zinc-400">Compete in the most popular MOBA.</p>
+        <button class="bg-blue-500 text-white p-2 rounded-lg mt-2" on:click={joinQueue}>Join Queue</button>
       </div>
     </div>
   </div>

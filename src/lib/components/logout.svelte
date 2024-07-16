@@ -4,7 +4,6 @@
 
     const logout = async () => {
         await signOut(auth);
-        console.log("Logged out");
     };
 </script>
 

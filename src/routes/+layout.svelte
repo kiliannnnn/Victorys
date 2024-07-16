@@ -7,7 +7,6 @@
     import Footer from "$lib/components/footer.svelte";
 
     let user = null;
-
     onMount(() => {
         onAuthStateChanged(auth, (currentUser) => {
             user = currentUser;
@@ -20,11 +19,11 @@
     });
 </script>
 
-<Header {user} />
+<Header />
 
 <main class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
     <div class="container mx-auto p-4">
-        <slot {user} />
+        <slot />
     </div>
 </main>
 

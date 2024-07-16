@@ -7,6 +7,7 @@
     import Logout from "$lib/components/logout.svelte";
   
     export let user = null;
+    
     const showDropdown = writable(false);
     const isDarkMode = writable(false);
   

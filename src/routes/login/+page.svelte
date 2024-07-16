@@ -1,6 +1,6 @@
 <script>
     import { auth } from "$lib/firebaseConfig";
-    import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+    import { signInWithEmailAndPassword } from "firebase/auth";
     import { writable } from "svelte/store";
 
     let email = "";
