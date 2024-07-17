@@ -1,53 +1,92 @@
 <script>
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
-  import { auth } from "$lib/firebaseConfig";
+  import { db, auth } from "$lib/firebaseConfig";
   import { onAuthStateChanged, getIdToken } from "firebase/auth";
   import { userStore } from "$lib/stores";
   import { get } from 'svelte/store';
+  import { collection, addDoc, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
 
+  export let data;
   export let user = null;
+  let queue = [];
+  let userInQueue = false;
+  const queueRef = collection(db, 'queue');
   userStore.subscribe(value => user = value);
 
   onMount(() => {
-    if (!user) {
-      onAuthStateChanged(auth, (currentUser) => {
-        if (currentUser) {
-          userStore.set(currentUser);
-        } else {
-          console.error("User not authenticated");
-        }
-      });
-    }
+    onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        userStore.set(currentUser);
+        checkUserInQueue(currentUser);
+      } else {
+        console.error("User not authenticated");
+      }
+    });
+
+    onSnapshot(queueRef, (snapshot) => {
+      queue = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (user) {
+        checkUserInQueue(user);
+      }
+      if (queue.length >= 2) {
+        createDuel();
+      }
+    });
   });
-  export let data;
+
+  function checkUserInQueue(currentUser) {
+    userInQueue = queue.some(person => person.uid === currentUser.uid);
+  }
 
   async function joinQueue() {
     const currentUser = get(userStore);
 
-    if (!user) {
-      console.error("User ID not available");
-      return;
+    if (currentUser) {
+      const userInQueue = queue.find(person => person.uid === currentUser.uid);
+      if (!userInQueue) {
+        await addDoc(queueRef, { name: currentUser.displayName || currentUser.uid, uid: currentUser.uid });
+        checkUserInQueue(currentUser);
+      }
+    } else {
+      alert("You must be logged in to join the queue.");
     }
-    const idToken = await getIdToken(currentUser);
+  }
 
-    const response = await fetch("/duel", {
-      method: "POST",
-      body: JSON.stringify({ user }),
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${idToken}`
+  async function leaveQueue() {
+    const currentUser = get(userStore);
+
+    if (currentUser) {
+      const userDoc = queue.find(person => person.uid === currentUser.uid);
+      if (userDoc) {
+        await deleteDoc(doc(db, 'queue', userDoc.id));
+        checkUserInQueue(currentUser);
+      }
+    }
+  }
+
+  async function createDuel() {
+    const player1 = queue[0];
+    const player2 = queue[1];
+
+    await deleteDoc(doc(db, 'queue', player1.id));
+    await deleteDoc(doc(db, 'queue', player2.id));
+
+    const response = await fetch('src/routes/api/create-duel.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: currentUser.uid }),
+      body: JSON.stringify({
+        player1_id: player1.uid,
+        player2_id: player2.uid,
+      }),
     });
 
-    const data = await response.json();
+    const result = await response.json();
+    console.log(result);
 
-    if (data.duelId) {
-      goto(`/duel/${data.duelId}`);
-    } else {
-      console.error("Failed to join the queue");
-    }
+    queue = queue.slice(2);
   }
 </script>
 
@@ -79,7 +118,18 @@
       <div>
         <h3 class="text-xl font-bold">League of Legends</h3>
         <p class="text-zinc-600 dark:text-zinc-400">Compete in the most popular MOBA.</p>
-        <button class="bg-blue-500 text-white p-2 rounded-lg mt-2" on:click={joinQueue}>Join Queue</button>
+        {#if userInQueue}
+          <button class="bg-red-500 text-white p-2 rounded-lg mt-2" on:click={leaveQueue}>Leave Queue</button>
+        {:else}
+          <button class="bg-blue-500 text-white p-2 rounded-lg mt-2" on:click={joinQueue}>Join Queue</button>
+        {/if}
+        <div>
+          <ul>
+            {#each queue as person}
+              <li class="queue-item">{person.name}</li>
+            {/each}
+          </ul>
+        </div>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import admin from 'firebase-admin';
 
-const serviceAccount = "/victorys-428bc-firebase-adminsdk-e3s9u-2e8690e67a.json";
+const serviceAccount = "/$lib/victorys-428bc-firebase-adminsdk-e3s9u-2e8690e67a.json";
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -9,4 +9,4 @@ if (!admin.apps.length) {
   });
 }
 
-export const auth = admin.auth();
+export const adminAuth = admin.auth();
