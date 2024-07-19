@@ -72,7 +72,7 @@
     await deleteDoc(doc(db, 'queue', player1.id));
     await deleteDoc(doc(db, 'queue', player2.id));
 
-    const response = await fetch('src/routes/api/create-duel.js', {
+    const response = await fetch('/api/duel', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,7 +86,11 @@
     const result = await response.json();
     console.log(result);
 
-    queue = queue.slice(2);
+    if (result.success) {
+      queue = queue.slice(2);
+    } else {
+      console.log(result.message);
+    }
   }
 </script>
 
