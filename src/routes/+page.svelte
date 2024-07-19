@@ -29,9 +29,9 @@
       if (user) {
         checkUserInQueue(user);
       }
-      if (queue.length >= 2) {
-        createDuel();
-      }
+      // if (queue.length >= 2) {
+      //   createDuel();
+      // }
     });
   });
 
@@ -65,33 +65,33 @@
     }
   }
 
-  async function createDuel() {
-    const player1 = queue[0];
-    const player2 = queue[1];
+  // async function createDuel() {
+  //   const player1 = queue[0];
+  //   const player2 = queue[1];
 
-    await deleteDoc(doc(db, 'queue', player1.id));
-    await deleteDoc(doc(db, 'queue', player2.id));
+  //   await deleteDoc(doc(db, 'queue', player1.id));
+  //   await deleteDoc(doc(db, 'queue', player2.id));
 
-    const response = await fetch('/api/duel', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        player1_id: player1.uid,
-        player2_id: player2.uid,
-      }),
-    });
+  //   const response = await fetch('/api/duel', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       player1_id: player1.uid,
+  //       player2_id: player2.uid,
+  //     }),
+  //   });
 
-    const result = await response.json();
-    console.log(result);
+  //   const result = await response.json();
+  //   console.log(result);
 
-    if (result.success) {
-      queue = queue.slice(2);
-    } else {
-      console.log(result.message);
-    }
-  }
+  //   if (result.success) {
+  //     queue = queue.slice(2);
+  //   } else {
+  //     console.log(result.message);
+  //   }
+  // }
 </script>
 
 <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
