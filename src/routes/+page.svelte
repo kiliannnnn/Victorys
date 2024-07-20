@@ -1,11 +1,10 @@
 <script>
-  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { db, auth } from "$lib/firebaseConfig";
-  import { onAuthStateChanged, getIdToken } from "firebase/auth";
+  import { onAuthStateChanged } from "firebase/auth";
   import { userStore } from "$lib/stores";
   import { get } from 'svelte/store';
-  import { collection, addDoc, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
+  import { collection, addDoc, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 
   export let data;
   export let user = null;
@@ -28,10 +27,12 @@
       queue = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       if (user) {
         checkUserInQueue(user);
+        if (queue.length >= 2) {
+          if (queue[0].uid === user.uid) {
+            createDuel();
+          }
+        }
       }
-      // if (queue.length >= 2) {
-      //   createDuel();
-      // }
     });
   });
 
@@ -65,33 +66,39 @@
     }
   }
 
-  // async function createDuel() {
-  //   const player1 = queue[0];
-  //   const player2 = queue[1];
+  async function createDuel() {
+    const player1 = queue[0];
+    const player2 = queue[1];
 
-  //   await deleteDoc(doc(db, 'queue', player1.id));
-  //   await deleteDoc(doc(db, 'queue', player2.id));
+    // Remove players from the queue
+    await deleteDoc(doc(db, 'queue', player1.id));
+    await deleteDoc(doc(db, 'queue', player2.id));
 
-  //   const response = await fetch('/api/duel', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       player1_id: player1.uid,
-  //       player2_id: player2.uid,
-  //     }),
-  //   });
+    // Create duel on the server
+    try {
+      const response = await fetch('/create-duel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          player1: {
+            uid: player1.uid,
+            name: player1.name
+          },
+          player2: {
+            uid: player2.uid,
+            name: player2.name
+          }
+        })
+      });
 
-  //   const result = await response.json();
-  //   console.log(result);
-
-  //   if (result.success) {
-  //     queue = queue.slice(2);
-  //   } else {
-  //     console.log(result.message);
-  //   }
-  // }
+      const result = await response.json();
+      console.log(result.message);
+    } catch (error) {
+      console.error('Error creating duel:', error);
+    }
+  }
 </script>
 
 <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
@@ -130,7 +137,7 @@
         <div>
           <ul>
             {#each queue as person}
-              <li class="queue-item">{person.name}</li>
+              <li>{person.name}</li>
             {/each}
           </ul>
         </div>
