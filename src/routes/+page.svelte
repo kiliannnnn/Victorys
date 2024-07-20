@@ -4,7 +4,7 @@
   import { onAuthStateChanged } from "firebase/auth";
   import { userStore } from "$lib/stores";
   import { get } from 'svelte/store';
-  import { collection, addDoc, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
+  import { collection, addDoc, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
 
   export let data;
   export let user = null;
@@ -27,11 +27,9 @@
       queue = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       if (user) {
         checkUserInQueue(user);
-        if (queue.length >= 2) {
-          if (queue[0].uid === user.uid) {
-            createDuel();
-          }
-        }
+      }
+      if (queue.length >= 2) {
+        createDuel();
       }
     });
   });
@@ -67,36 +65,26 @@
   }
 
   async function createDuel() {
+    const currentUser = get(userStore);
     const player1 = queue[0];
     const player2 = queue[1];
 
-    // Remove players from the queue
     await deleteDoc(doc(db, 'queue', player1.id));
     await deleteDoc(doc(db, 'queue', player2.id));
 
-    // Create duel on the server
-    try {
-      const response = await fetch('/create-duel', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          player1: {
-            uid: player1.uid,
-            name: player1.name
-          },
-          player2: {
-            uid: player2.uid,
-            name: player2.name
-          }
-        })
+    if (currentUser.uid == player1.uid) {
+      await fetch('/api/duel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        player1_id: player1.uid,
+        player2_id: player2.uid,
+      }),
       });
-
-      const result = await response.json();
-      console.log(result.message);
-    } catch (error) {
-      console.error('Error creating duel:', error);
+    } else if (currentUser.uid == player2.uid) {
+      console.log("Your opponent is creating the duel");
     }
   }
 </script>
@@ -137,7 +125,7 @@
         <div>
           <ul>
             {#each queue as person}
-              <li>{person.name}</li>
+              <li class="queue-item">{person.name}</li>
             {/each}
           </ul>
         </div>

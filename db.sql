@@ -22,7 +22,8 @@ CREATE TABLE `duels` (
   `player2_id` INT NOT NULL,
   `winner_id` INT,
   `status` ENUM('pending', 'in progress', 'completed', 'cancelled') NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`tournament_id`) REFERENCES `tournaments`( `id`),
   FOREIGN KEY (`player1_id`) REFERENCES `users`( `id`),
   FOREIGN KEY (`player2_id`) REFERENCES `users`( `id`)
