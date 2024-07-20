@@ -1,25 +1,22 @@
 <script>
-    import { onMount } from 'svelte';
-    import { auth } from "$lib/firebaseConfig";
-    import { onAuthStateChanged } from "firebase/auth";
-    import { goto } from "$app/navigation";
-    import Header from "$lib/components/header.svelte";
-    import Footer from "$lib/components/footer.svelte";
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import Header from '$lib/components/header.svelte';
+	import Footer from '$lib/components/footer.svelte';
+	import { writable } from 'svelte/store';
 
-    let user = null;
-    onMount(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            user = currentUser;
-            if (currentUser) {
-                goto("/");
-            } else {
-                goto("/login");
-            }
-        });
-    });
+    const user = writable(null);
+
+    function handleLogin(event) {
+        user.set(event.detail.user);
+    }
+
+    function handleLogout() {
+        user.set(null);
+    }
 </script>
 
-<Header />
+<Header on:login={handleLogin} on:logout={handleLogout} />
 
 <main class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
     <div class="container mx-auto p-4">
@@ -30,5 +27,5 @@
 <Footer />
 
 <style global>
-    @import "../app.css";
+	@import '../app.css';
 </style>
