@@ -3,7 +3,6 @@
 	import { writable } from 'svelte/store';
 	import { browser } from '$app/environment';
 	import { SignIn, SignOut } from "@auth/sveltekit/components";
-	import { signIn, signOut } from "@auth/sveltekit/client";
 	import { page } from '$app/stores';
 
 	const showDropdown = writable(false);
@@ -91,7 +90,9 @@
 					{:else}
 						<a class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
 							href="/login" role="menuitem">Login</a>
-						<SignIn />
+						<SignIn>
+							<div slot="submitButton" class="buttonPrimary">Sign in</div>
+						</SignIn>
 						<a class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
                             href="/register" role="menuitem">Register</a>
 					{/if}
