@@ -30,7 +30,7 @@ export async function POST({ request }) {
             createdAt: FieldValue.serverTimestamp(),
         });
 
-        return json({ success: true, message: 'Duel created', duel });
+        return json({ success: true, message: 'Duel created', duelId: duel.id });
     } catch (error) {
         console.error('Error creating duel:', error);
         return json({ success: false, message: 'Internal Error', error: error.message }, { status: 500 });
