@@ -86,12 +86,12 @@
                             href="/chatbox" role="menuitem">Chatbox</a>
 						<a class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
                             href="/settings" role="menuitem">Settings</a>
-						<SignOut />
+						<SignOut class="w-100 block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700">
+							<div slot="submitButton">Logout</div>
+						</SignOut>
 					{:else}
-						<a class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
-							href="/login" role="menuitem">Login</a>
-						<SignIn>
-							<div slot="submitButton" class="buttonPrimary">Sign in</div>
+						<SignIn class="w-100 block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700">
+							<div slot="submitButton">Login</div>
 						</SignIn>
 						<a class="block px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700"
                             href="/register" role="menuitem">Register</a>
