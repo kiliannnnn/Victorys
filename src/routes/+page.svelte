@@ -1,13 +1,5 @@
 <script>
-    const data = {
-        users: [
-            { username: 'John Doe', token: 100 },
-            { username: 'Jane Doe', token: 200 },
-            { username: 'Alice Doe', token: 300 },
-            { username: 'Bob Doe', token: 400 },
-            { username: 'Eve Doe', token: 500 },
-        ],
-    };
+    export let data;
 	/**
 	 * @type {boolean}
 	 */
@@ -27,30 +19,6 @@
 		// queue = [...queue, { name: user.username }];
 		userInQueue = true;
 	}
-
-    import PocketBase from 'pocketbase';
-
-    async function fetchRecords() {
-        const pb = new PocketBase('http://127.0.0.1:8090');
-
-        const authData = await pb.collection('users').authWithPassword(
-            'user1@gmail.com',
-            '12345678',
-        );
-
-        try {
-            const records = await pb.collection('users').getFullList({
-                sort: '-created',
-            });
-            records.forEach(element => {
-                console.log("Name : "+element.username);
-            });
-        } catch (error) {
-            console.error('Error fetching records:', error);
-        }
-    }
-
-    fetchRecords();
 </script>
 
 <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
