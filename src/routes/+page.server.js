@@ -1,15 +1,20 @@
 import PocketBase from 'pocketbase';
-import { onMount } from 'svelte';
 
 let users = [];
 
 async function getAllUsers() {
-    const pb = new PocketBase('http://127.0.0.1:8090');
+    const pb = new PocketBase(import.meta.env.PB_URL);
 
+    pb.send = async function (path, options) {
+        const url = `${this.baseUrl}${path}`;
+        const response = await fetch(url, options);
+        return response.json();
+    };
+    
     try {
         const authData = await pb.admins.authWithPassword(
-            'coudurier.kilian@gmail.com',
-            'NaJBuu*42#',
+            import.meta.env.VITE_PB_ADMIN_EMAIL,
+            import.meta.env.VITE_PB_ADMIN_PASS,
         );
 
         const records = await pb.collection('users').getFullList({
