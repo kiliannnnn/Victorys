@@ -3,14 +3,8 @@ import PocketBase from 'pocketbase';
 let users = [];
 
 async function getAllUsers() {
-    const pb = new PocketBase(import.meta.env.PB_URL);
+    const pb = new PocketBase(import.meta.env.VITE_PB_URL);
 
-    pb.send = async function (path, options) {
-        const url = `${this.baseUrl}${path}`;
-        const response = await fetch(url, options);
-        return response.json();
-    };
-    
     try {
         const authData = await pb.admins.authWithPassword(
             import.meta.env.VITE_PB_ADMIN_EMAIL,

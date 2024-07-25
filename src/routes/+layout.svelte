@@ -7,10 +7,8 @@
 
 <Header />
 
-<main class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
-	<div class="container mx-auto p-4">
-		<slot />
-	</div>
+<main class="bg-background container mx-auto p-4">
+	<slot />
 </main>
 
 <Footer />
