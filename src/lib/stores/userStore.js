@@ -4,14 +4,15 @@ import PocketBase from 'pocketbase';
 export const user = writable(null);
 
 const pb = new PocketBase(import.meta.env.VITE_PB_URL);
-const authData = await pb.admins.authWithPassword(
-    import.meta.env.VITE_PB_ADMIN_EMAIL,
-    import.meta.env.VITE_PB_ADMIN_PASS,
-);
 
-// ADD Verification
+// ADD Verifications
 export async function registerUser(username, email, password, passwordConfirm) {
     try {
+        const authData = await pb.admins.authWithPassword(
+            import.meta.env.VITE_PB_ADMIN_EMAIL,
+            import.meta.env.VITE_PB_ADMIN_PASS,
+        );
+
         const data = {
             "username": username,
             "email": email,
@@ -27,28 +28,18 @@ export async function registerUser(username, email, password, passwordConfirm) {
     }
 }
 
-export async function loginUser(credentials) {
-    authStatus.set({ isLoading: true, isLoggedIn: false, error: null });
+export async function loginUser(email, password) {
     try {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(credentials)
-        });
-        if (!response.ok) {
-            throw new Error('Login failed');
-        }
-        const userData = await response.json();
-        user.set(userData);
-        authStatus.set({ isLoading: false, isLoggedIn: true, error: null });
+        const authData = await pb.collection('users').authWithPassword(
+            email,
+            password,
+        );
+        user.set(authData);
     } catch (error) {
-        authStatus.set({ isLoading: false, isLoggedIn: false, error: error.message });
+        console.log('Error logging in:', error);
     }
 }
 
 export function logoutUser() {
     user.set(null);
-    authStatus.set({ isLoading: false, isLoggedIn: false, error: null });
 }
