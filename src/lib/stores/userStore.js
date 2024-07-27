@@ -1,45 +1,50 @@
 import { writable } from 'svelte/store';
 import PocketBase from 'pocketbase';
+import { redirect } from '@sveltejs/kit';
+import { goto } from '$app/navigation';
 
 export const user = writable(null);
 
 const pb = new PocketBase(import.meta.env.VITE_PB_URL);
 
-// ADD Verifications
+// ADD VERIFICATIONS
 export async function registerUser(username, email, password, passwordConfirm) {
     try {
-        const authData = await pb.admins.authWithPassword(
+        await pb.admins.authWithPassword(
             import.meta.env.VITE_PB_ADMIN_EMAIL,
             import.meta.env.VITE_PB_ADMIN_PASS,
         );
 
         const data = {
-            "username": username,
-            "email": email,
-            "emailVisibility": true,
-            "password": password,
-            "passwordConfirm": passwordConfirm
+            username,
+            email,
+            emailVisibility: true,
+            password,
+            passwordConfirm,
         };
 
         const record = await pb.collection('users').create(data);
         await pb.collection('users').requestVerification(record.email);
+        goto('/login');
+        console.log('User registered successfully');
     } catch (error) {
-        console.log('Error creating record:', error);
+        console.error('Error creating record:', error);
     }
 }
 
 export async function loginUser(email, password) {
     try {
-        const authData = await pb.collection('users').authWithPassword(
-            email,
-            password,
-        );
+        const authData = await pb.collection('users').authWithPassword(email, password);
         user.set(authData);
+        console.log('User logged in successfully');
+        goto('/');
     } catch (error) {
-        console.log('Error logging in:', error);
+        console.error('Error logging in:', error);
     }
 }
 
 export function logoutUser() {
     user.set(null);
+    pb.authStore.clear();
+    console.log('User logged out successfully');
 }

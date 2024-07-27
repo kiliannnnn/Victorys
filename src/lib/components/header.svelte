@@ -15,7 +15,8 @@
 	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
 	import { browser } from "$app/environment";
-	import { page } from "$app/stores";
+	
+	import { user, logoutUser } from "$lib/stores/userStore";
 
 	const showDropdown = writable(false);
 	const isDarkMode = writable(false);
@@ -40,6 +41,19 @@
 			}
 		});
 	}
+
+	let userState;
+	user.subscribe(value => {
+	  userState = value;
+	});
+
+	const handleLogout = async () => {
+		try {
+			await logoutUser();
+		} catch (error) {
+			console.error(error);
+		}
+	};
 </script>
 
 <header class="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -91,13 +105,13 @@
 			<DropdownMenuContent align="end">
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				{#if $page.data.session }
-					<DropdownMenuItem href="/account">Account</DropdownMenuItem>
-					<DropdownMenuItem href="/settings">Settings</DropdownMenuItem>
-					<DropdownMenuItem href="/logout">Logout</DropdownMenuItem>
-				{:else}
+				{#if !userState || userState == false}
 					<DropdownMenuItem href="/login">Login</DropdownMenuItem>
 					<DropdownMenuItem href="/register">Register</DropdownMenuItem>
+				{:else}
+					<DropdownMenuItem href="/account">Account</DropdownMenuItem>
+					<DropdownMenuItem href="/settings">Settings</DropdownMenuItem>
+					<DropdownMenuItem on:click={handleLogout}>Logout</DropdownMenuItem>
 				{/if}
 			</DropdownMenuContent>
 		</DropdownMenu>
