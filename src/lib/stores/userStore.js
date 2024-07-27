@@ -48,3 +48,18 @@ export function logoutUser() {
     pb.authStore.clear();
     console.log('User logged out successfully');
 }
+
+export async function joinQueue() {
+    if (!pb.authStore.authenticated) {
+        redirect('/login');
+    }
+    else {
+        try {
+            user.set(await pb.authStore.getAuthData());
+            await pb.collection('queue').create(data);
+            console.log('User joined queue successfully');
+        } catch (error) {
+            console.error('Error joining queue:', error);
+        }
+    }
+}

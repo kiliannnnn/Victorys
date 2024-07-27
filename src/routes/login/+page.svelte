@@ -30,7 +30,7 @@
     }
 </script>
 
-<Card class="mx-auto max-w-sm">
+<Card x-chunk="dashboard-04-chunk-1" class="mx-auto max-w-sm">
     {#if !userState || userState == false}
         <CardHeader>
             <CardTitle class="text-2xl">Login</CardTitle>

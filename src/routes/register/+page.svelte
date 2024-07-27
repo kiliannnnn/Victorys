@@ -13,7 +13,15 @@
 	user.subscribe(value => {
 	  userState = value;
 	});
-    
+
+    async function handleRegister() {
+        try {
+            await registerUser(username, email, password, password);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     async function handleLogout() {
         try {
             await logoutUser();
@@ -45,7 +53,7 @@
                     <Label htmlFor="password">Password</Label>
                     <Input id="password" type="password" bind:value={password} required/>
                 </div>
-                <Button type="submit" class="w-full" on:click={registerUser(username, email, password, password)}>Create an account</Button>
+                <Button type="submit" class="w-full" on:click={handleRegister}>Create an account</Button>
                 <Button variant="outline" class="w-full">Sign up with GitHub</Button>
             </div>
             <div class="mt-4 text-center text-sm">

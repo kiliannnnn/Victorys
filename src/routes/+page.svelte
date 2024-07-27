@@ -17,6 +17,8 @@
       CardTitle,
     } from "$lib/components/ui/card"
 
+    import { user } from "$lib/stores/userStore";
+
     export let data;
 	/**
 	 * @type {boolean}
@@ -37,9 +39,14 @@
 		// queue = [...queue, { name: user.username }];
 		userInQueue = true;
 	}
+
+    let userState;
+	user.subscribe(value => {
+	  userState = value;
+	});
 </script>
 
-<div class="bg-background">
+<div class="bg-background grid gap-6">
     <Card>
         <CardHeader>
             <CardTitle>Tournament of Champions 2023</CardTitle>
@@ -69,23 +76,25 @@
         </CardFooter>
     </Card>
 
-    <TableHead>Leaderboard</TableHead>
-    <Table>
-        <TableHeader>
-            <TableRow>
-                <TableCell>Rank</TableCell>
-                <TableCell>Username</TableCell>
-                <TableCell>Token</TableCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            {#each data.users as user, index}
+    <div>
+        <TableHead>Leaderboard</TableHead>
+        <Table>
+            <TableHeader>
                 <TableRow>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.token}</TableCell>
+                    <TableCell>Rank</TableCell>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Token</TableCell>
                 </TableRow>
-            {/each}
-        </TableBody>
-    </Table>
+            </TableHeader>
+            <TableBody>
+                {#each data.users as user, index}
+                    <TableRow>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{user.username}</TableCell>
+                        <TableCell>{user.token}</TableCell>
+                    </TableRow>
+                {/each}
+            </TableBody>
+        </Table>
+    </div>
 </div>
