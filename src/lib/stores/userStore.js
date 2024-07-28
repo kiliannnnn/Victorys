@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store';
 import PocketBase from 'pocketbase';
-import { redirect } from '@sveltejs/kit';
 import { goto } from '$app/navigation';
 
 export const user = writable(null);
@@ -63,19 +62,4 @@ export function logoutUser() {
     user.set(null);
     pb.authStore.clear();
     console.log('User logged out successfully');
-}
-
-export async function joinQueue() {
-    if (!pb.authStore.authenticated) {
-        redirect('/login');
-    }
-    else {
-        try {
-            user.set(await pb.authStore.getAuthData());
-            await pb.collection('queue').create(data);
-            console.log('User joined queue successfully');
-        } catch (error) {
-            console.error('Error joining queue:', error);
-        }
-    }
 }

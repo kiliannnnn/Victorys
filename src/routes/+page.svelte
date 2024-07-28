@@ -20,29 +20,32 @@
     import { onMount } from "svelte";
 
     import { user, getAllUsers } from "$lib/stores/userStore";
-
-	/**
-	 * @type {boolean}
-	 */
-	let userInQueue = false;
-
-	/**
-	 * @type {any[]}
-	 */
-	let queue = [];
-
-	function leaveQueue() {
-		userInQueue = false;
-	}
-
-	function joinQueue() {
-		userInQueue = true;
-	}
+    import { createDuel, joinDuel, leaveDuel, userInQueue } from "$lib/stores/duelStore";
     
     let users = [];
+    let isWaiting = false;
     onMount(async () => {
         users = await getAllUsers();
+        isWaiting = await userInQueue();
     });
+
+    async function handleJoinDuel() {
+        try {
+            await joinDuel();
+            isWaiting = true;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function handleLeaveDuel() {
+        try {
+            await leaveDuel();
+            isWaiting = false;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 </script>
 
 <div class="bg-background grid gap-6">
@@ -55,10 +58,10 @@
             <p>April 15, 2024</p>
         </CardContent>
         <CardFooter>
-            {#if userInQueue}
-                <Button color="red" on:click={leaveQueue}>Leave Queue</Button>
+            {#if isWaiting}
+                <Button color="red" on:click={handleLeaveDuel}>Leave Queue</Button>
             {:else}
-                <Button color="blue" on:click={joinQueue}>Join Queue</Button>
+                <Button color="blue" on:click={handleJoinDuel}>Join Queue</Button>
             {/if}
         </CardFooter>
     </Card>
