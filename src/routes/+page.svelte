@@ -17,9 +17,10 @@
       CardTitle,
     } from "$lib/components/ui/card"
 
-    import { user } from "$lib/stores/userStore";
+    import { onMount } from "svelte";
 
-    export let data;
+    import { user, getAllUsers } from "$lib/stores/userStore";
+
 	/**
 	 * @type {boolean}
 	 */
@@ -31,19 +32,17 @@
 	let queue = [];
 
 	function leaveQueue() {
-		// queue = queue.filter(person => person.name !== user.username);
 		userInQueue = false;
 	}
 
 	function joinQueue() {
-		// queue = [...queue, { name: user.username }];
 		userInQueue = true;
 	}
-
-    let userState;
-	user.subscribe(value => {
-	  userState = value;
-	});
+    
+    let users = [];
+    onMount(async () => {
+        users = await getAllUsers();
+    });
 </script>
 
 <div class="bg-background grid gap-6">
@@ -87,7 +86,7 @@
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {#each data.users as user, index}
+                {#each users as user, index}
                     <TableRow>
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{user.username}</TableCell>
