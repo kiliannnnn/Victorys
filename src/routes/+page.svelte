@@ -19,18 +19,24 @@
 
     import { onMount } from "svelte";
 
-    import { user, getAllUsers } from "$lib/stores/userStore";
+    import { user, getAllUsers, getLoggedUser } from "$lib/stores/userStore";
     import { createDuel, joinDuel, leaveDuel, userInQueue } from "$lib/stores/duelStore";
     
+    let loggedUser = null;
     let users = [];
     let isWaiting = false;
+
+    $: loggedUser = $user;
+
     onMount(async () => {
         users = await getAllUsers();
-        isWaiting = await userInQueue();
+        handleCheckUserInQueue();
     });
 
     async function handleJoinDuel() {
         try {
+            await handleCheckUserInQueue();
+            if (isWaiting) return
             await joinDuel();
             isWaiting = true;
         } catch (error) {
@@ -40,8 +46,20 @@
 
     async function handleLeaveDuel() {
         try {
+            await handleCheckUserInQueue();
+            if (!isWaiting) return
             await leaveDuel();
             isWaiting = false;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function handleCheckUserInQueue() {
+        try {
+            if (loggedUser?.record?.id) {
+                isWaiting = await userInQueue(loggedUser.record.id);
+            }
         } catch (error) {
             console.error(error);
         }
