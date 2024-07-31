@@ -35,33 +35,47 @@
 
     async function handleJoinDuel() {
         try {
+            if (!loggedUser) {
+                console.error('No logged in user.');
+                return;
+            }
             await handleCheckUserInQueue();
-            if (isWaiting) return
+            if (isWaiting) {
+                console.log('Already in queue.');
+                return;
+            }
             await joinDuel();
             isWaiting = true;
         } catch (error) {
-            console.error(error);
+            console.error('Error joining duel:', error);
         }
     }
 
     async function handleLeaveDuel() {
         try {
+            if (!loggedUser) {
+                console.error('No logged in user.');
+                return;
+            }
             await handleCheckUserInQueue();
-            if (!isWaiting) return
+            if (!isWaiting) {
+                console.log('Not in queue.');
+                return;
+            }
             await leaveDuel();
             isWaiting = false;
         } catch (error) {
-            console.error(error);
+            console.error('Error leaving duel:', error);
         }
     }
 
     async function handleCheckUserInQueue() {
         try {
-            if (loggedUser?.record?.id) {
-                isWaiting = await userInQueue(loggedUser.record.id);
+            if (loggedUser?.id) {
+                isWaiting = await userInQueue(loggedUser.id);
             }
         } catch (error) {
-            console.error(error);
+            console.error('Error checking queue status:', error);
         }
     }
 </script>
