@@ -1,7 +1,9 @@
 import { writable } from 'svelte/store';
 import PocketBase from 'pocketbase';
 import { goto } from '$app/navigation';
-import { User } from 'lucide-svelte';
+// import { User } from 'lucide-svelte';
+import { userMapping } from '$lib/userMappingStore';
+
 
 export const user = writable(null);
 
@@ -13,6 +15,7 @@ async function init() {
         if (isLoggedIn) {
             const currentUser = pb.authStore.model;
             user.set(currentUser);
+            userMapping.update(map => map.set(currentUser.id, currentUser.pocketbaseId));
         }
     } catch (error) {
         console.error('Error initializing user store:', error);
@@ -20,7 +23,6 @@ async function init() {
 }
 
 init();
-
 
 export async function getAllUsers() {
     try {
@@ -36,7 +38,11 @@ export async function getAllUsers() {
 
 export async function getLoggedUser(userId) {
     try {
-        const record = await pb.collection('users').getOne(userId);
+        const pocketbaseId = getPocketbaseId(userId);
+        if (!pocketbaseId) {
+            throw new Error('PocketBase ID not found for user');
+        }
+        const record = await pb.collection('users').getOne(pocketbaseId);
         user.set(record);
         return record;
     } catch (error) {
@@ -58,6 +64,7 @@ export async function registerUser(username, email, password, passwordConfirm) {
 
         const record = await pb.collection('users').create(data);
         await pb.collection('users').requestVerification(record.email);
+        userMapping.update(map => map.set(record.id, record.pocketbaseId));
         goto('/login');
         console.log('User registered successfully');
     } catch (error) {
@@ -69,6 +76,7 @@ export async function loginUser(email, password) {
     try {
         const authData = await pb.collection('users').authWithPassword(email, password);
         user.set(authData.record);
+        userMapping.update(map => map.set(authData.record.id, authData.record.pocketbaseId));
         console.log('User logged in successfully');
         goto('/');
     } catch (error) {
@@ -81,4 +89,12 @@ export function logoutUser() {
     pb.authStore.clear();
     console.log('User logged out successfully');
     goto('/login');
+}
+
+function getPocketbaseId(userId) {
+    let pocketbaseId;
+    userMapping.subscribe(map => {
+        pocketbaseId = map.get(userId);
+    })();
+    return pocketbaseId;
 }
