@@ -1,21 +1,16 @@
-node_modules
+# build output
+dist/
 
-# Output
-.output
-.vercel
-/.svelte-kit
-/build
+# generated types
+.astro/
 
-# OS
-.DS_Store
-Thumbs.db
+# dependencies
+node_modules/
 
-# Env
+# logs
+npm-debug.log*
+
+# environment variables
 .env
-.env.*
-!.env.example
-!.env.test
+.env.production
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
