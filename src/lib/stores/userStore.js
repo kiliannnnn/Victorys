@@ -2,8 +2,7 @@ import { writable } from 'svelte/store';
 import PocketBase from 'pocketbase';
 import { goto } from '$app/navigation';
 // import { User } from 'lucide-svelte';
-import { userMapping } from '$lib/userMappingStore';
-
+import { userMapping } from '$lib/stores/userMappingStore';
 
 export const user = writable(null);
 
