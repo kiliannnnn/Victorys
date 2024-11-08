@@ -23,6 +23,11 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# vscode conf folder
 .vscode/
 
-.obsidian
+# obsidian conf folder
+.obsidian/
+
+# vercel conf folder
+.vercel/
