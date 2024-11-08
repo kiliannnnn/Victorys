@@ -1,34 +1,12 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import Layout from '@/layouts/HTML.astro';
 import Theme from '@/components/Theme.astro';
 import FeedbackForm from "@/components/FeedbackForm"
-
-export async function getItem(id : number) {
-	const res = await fetch(`api/${id}.json`);
-	const data = await res.json();
-	return { data };
-}
-
-export async function post() {
-    const response = await fetch("/api/methods", {
-        method: "POST",
-        body: JSON.stringify({ name: "John Doe" }),
-    });
-    const data = await response.json();
-    return data;
-}
-
 ---
 
 <Layout title="Home">
 	<Theme />
 	<FeedbackForm client:load />
-	<h1>Items</h1>
-	<p>{ await getItem(1) }</p>
-	<p>{ await getItem(2) }</p>
-	<p>{ await getItem(3) }</p>
-	<h1>Post</h1>
-	<p>{ await post() }</p>
 </Layout>
