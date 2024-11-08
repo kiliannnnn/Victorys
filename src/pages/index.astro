@@ -11,7 +11,7 @@ export async function getItem(id : number) {
 	return { data };
 }
 
-async function post() {
+export async function post() {
     const response = await fetch("/api/methods", {
         method: "POST",
         body: JSON.stringify({ name: "John Doe" }),
@@ -26,9 +26,9 @@ async function post() {
 	<Theme />
 	<FeedbackForm client:load />
 	<h1>Items</h1>
-	<p>{ getItem(1) }</p>
-	<p>{ getItem(2) }</p>
-	<p>{ getItem(3) }</p>
+	<p>{ await getItem(1) }</p>
+	<p>{ await getItem(2) }</p>
+	<p>{ await getItem(3) }</p>
 	<h1>Post</h1>
-	<p>{ post }</p>
+	<p>{ await post() }</p>
 </Layout>
