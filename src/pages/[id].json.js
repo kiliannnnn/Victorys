@@ -1,5 +1,4 @@
 export const prerender = false;
-import { getProduct } from '../db';
 
 export async function GET({ params }) {
     const id = params.id;
@@ -20,4 +19,14 @@ export async function GET({ params }) {
         }
     }
     );
+}
+
+async function getProduct(id) {
+    // simulate fetching product from database
+    const products = [
+        { id: '1', name: 'Product 1' },
+        { id: '2', name: 'Product 2' },
+        { id: '3', name: 'Product 3' }
+    ];
+    return products.find(p => p.id === id);
 }
