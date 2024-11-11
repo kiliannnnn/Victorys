@@ -3,10 +3,10 @@ export const prerender = true;
 
 import Layout from '@/layouts/HTML.astro';
 import Theme from '@/components/Theme.astro';
-import FeedbackForm from "@/components/FeedbackForm"
+import LoginForm from "@/components/LoginForm"
 ---
 
 <Layout title="Home">
 	<Theme />
-	<FeedbackForm client:load />
+	<LoginForm client:load />
 </Layout>

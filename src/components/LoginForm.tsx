@@ -1,7 +1,7 @@
 import { createSignal, createResource, Suspense } from "solid-js";
 
 async function postFormData(formData: FormData) {
-    const response = await fetch("/api/feedback", {
+    const response = await fetch("/api/login", {
         method: "POST",
         body: formData,
     });
@@ -21,16 +21,12 @@ export default function Form() {
     return (
         <form onSubmit={submit}>
             <label>
-                Name
-                <input type="text" id="name" name="name" required />
-            </label>
-            <label>
                 Email
                 <input type="email" id="email" name="email" required />
             </label>
             <label>
-                Message
-                <textarea id="message" name="message" required />
+                Password
+                <input type="password" id="password" name="password" required />
             </label>
             <button>Send</button>
             <Suspense>{response() && <p>{response().message}</p>}</Suspense>
