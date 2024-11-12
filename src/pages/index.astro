@@ -4,9 +4,11 @@ export const prerender = true;
 import Layout from '@/layouts/HTML.astro';
 import Theme from '@/components/Theme.astro';
 import LoginForm from "@/components/LoginForm"
+import RegisterForm from "@/components/RegisterForm"
 ---
 
 <Layout title="Home">
 	<Theme />
 	<LoginForm client:load />
+	<RegisterForm client:load />
 </Layout>
