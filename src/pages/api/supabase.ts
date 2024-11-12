@@ -5,9 +5,3 @@ if (!supabaseKey || !supabaseUrl) {
     throw new Error("Missing SUPABASE_URL or SUPABASE_KEY environment variables");
 }
 export const supabase = createClient(supabaseUrl, supabaseKey);
-console.log(supabase);
-
-const { data, error } = await supabase
-    .from('User')
-    .select()
-console.log(data, error);
