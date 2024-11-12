@@ -1,0 +1,10 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/HTML.astro';
+import RegisterForm from "@/components/RegisterForm"
+---
+
+<Layout title="Register">
+	<RegisterForm client:load />
+</Layout>

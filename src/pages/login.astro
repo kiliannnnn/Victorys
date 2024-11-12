@@ -1,0 +1,10 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/HTML.astro';
+import LoginForm from "@/components/LoginForm"
+---
+
+<Layout title="Login">
+	<LoginForm client:load />
+</Layout>
