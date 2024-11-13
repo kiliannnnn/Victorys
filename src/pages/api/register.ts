@@ -23,13 +23,18 @@ export const POST: APIRoute = async ({ request }) => {
         options: {
             data: {
                 username: username as string,
+                email: email as string,
+                password: password as string,
             },
         },
     });
 
+    console.log("data : ", data);
+    console.log("error : ", error);
+    
     return new Response(
         JSON.stringify({
-            message: data,
+            message: data ? "User created" : error?.message,
         }),
         { status: 200 }
     );
