@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import Layout from "@/layouts/HTML.astro";
+import Conversation from "@/components/Conversation.astro";
 
 const accessToken = Astro.cookies.get("sb-access-token");
 const refreshToken = Astro.cookies.get("sb-refresh-token");
@@ -28,10 +29,22 @@ try {
     return Astro.redirect("/signin");
 }
 
-let chatMessages: any[] = [];
-
 const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
 const currentUser = await supabase.auth.getUser();
+
+var { data } = await supabase
+  .from('messages')
+  .select()
+  .eq('sender', currentUser.data.user?.id)
+const fromCurrentUser = data;
+var { data } = await supabase
+  .from('messages')
+  .select()
+  .eq('target', currentUser.data.user?.id)
+const toCurrentUser = data;
+
+const messages = fromCurrentUser?.concat(toCurrentUser);
+messages?.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
 ---
 
 <Layout title="Chat">
@@ -54,6 +67,7 @@ const currentUser = await supabase.auth.getUser();
                     </ul>
                 </div>
 
+                <Conversation client:load currentUser=currentUser userId=userId />
                 <div class="flex-1 bg-gray-100 dark:bg-gray-900 rounded-lg p-6 flex flex-col">
                     <div id="chat-header" class="mb-6">
                         <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100" id="selected-user">
@@ -61,19 +75,19 @@ const currentUser = await supabase.auth.getUser();
                         </h2>
                     </div>
                     <div id="chat-box" class="flex-1 overflow-y-auto space-y-4">
-                        {chatMessages.map((message) => (
+                        {messages?.map((message) => (
                             <div
                                 class={`p-4 rounded-lg ${
-                                    message.sender_id === currentUser.data.user?.id
+                                    message.sender === currentUser.data.user?.id
                                         ? "bg-blue-500 text-white self-end"
                                         : "bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                                 }`}
                             >
-                                {message.message}
+                                {message.content}
                             </div>
                         ))}
                     </div>
-                    <form id="message-form" class="mt-6 flex" onsubmit="sendMessage(event)">
+                    <form id="message-form" class="mt-6 flex">
                         <input
                             type="text"
                             id="message-input"
@@ -90,67 +104,5 @@ const currentUser = await supabase.auth.getUser();
                 </div>
             </div>
         </div>
-
-        <script type="module">
-            import { createClient } from "@supabase/supabase-js";
-
-            const supabase = createClient("https://your-supabase-url", "your-supabase-anon-key");
-            const chatBox = document.getElementById("chat-box");
-            const selectedUserElement = document.getElementById("selected-user");
-            const messageInput = document.getElementById("message-input");
-            const currentUserId = "{currentUser.user.id}";
-
-            let selectedUserId = null;
-
-            async function selectUser(userId) {
-                selectedUserId = userId;
-
-                // Update header with the selected user's email
-                const { data: user } = await supabase.from("users").select("email").eq("id", userId).single();
-                selectedUserElement.textContent = `Chat with ${user.email}`;
-
-                // Fetch messages between the current user and the selected user
-                const { data: messages } = await supabase
-                    .from("messages")
-                    .select("sender_id, recipient_id, message")
-                    .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId}`)
-                    .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`);
-
-                chatBox.innerHTML = ""; // Clear chat box
-                messages.forEach((message) => {
-                    const messageDiv = document.createElement("div");
-                    messageDiv.textContent = message.message;
-                    messageDiv.className = `p-4 rounded-lg ${
-                        message.sender_id === currentUserId
-                            ? "bg-blue-500 text-white self-end"
-                            : "bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-                    }`;
-                    chatBox.appendChild(messageDiv);
-                });
-            }
-
-            async function sendMessage(event) {
-                event.preventDefault();
-
-                const messageText = messageInput.value.trim();
-                if (!messageText || !selectedUserId) return;
-
-                // Insert the new message into the database
-                await supabase.from("messages").insert({
-                    sender_id: currentUserId,
-                    recipient_id: selectedUserId,
-                    message: messageText,
-                });
-
-                // Display the message in the chat box
-                const messageDiv = document.createElement("div");
-                messageDiv.textContent = messageText;
-                messageDiv.className = "p-4 rounded-lg bg-blue-500 text-white self-end";
-                chatBox.appendChild(messageDiv);
-
-                messageInput.value = ""; // Clear input field
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
-            }
-        </script>
     </div>
 </Layout>
