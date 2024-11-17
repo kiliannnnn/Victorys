@@ -1,0 +1,78 @@
+---
+export const prerender = false;
+import Layout from "@/layouts/HTML.astro";
+import { supabase } from "@/lib/supabase";
+
+const accessToken = Astro.cookies.get("sb-access-token");
+const refreshToken = Astro.cookies.get("sb-refresh-token");
+
+if (!accessToken || !refreshToken) {
+    return Astro.redirect("/signin");
+}
+
+let session;
+try {
+    session = await supabase.auth.setSession({
+        refresh_token: refreshToken.value,
+        access_token: accessToken.value,
+    });
+    if (session.error) {
+        Astro.cookies.delete("sb-access-token", { path: "/" });
+        Astro.cookies.delete("sb-refresh-token", { path: "/" });
+        return Astro.redirect("/signin");
+    }
+} catch (error) {
+    Astro.cookies.delete("sb-access-token", { path: "/" });
+    Astro.cookies.delete("sb-refresh-token", { path: "/" });
+    return Astro.redirect("/signin");
+}
+
+const email = session.data.user?.email;
+---
+<Layout title="Profile">
+    <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-8">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col lg:flex-row overflow-hidden">
+                <nav class="bg-gray-200 dark:bg-gray-700 w-full lg:w-1/5">
+                    <ul>
+                        <li>
+                            <a href="#" class="block text-gray-900 dark:text-gray-100 font-semibold py-1 px-4 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800">
+                                Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block text-gray-500 dark:text-gray-400 py-1 px-4 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 hover:dark:text-gray-100">
+                                Account Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block text-gray-500 dark:text-gray-400 py-1 px-4 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 hover:dark:text-gray-100">
+                                Notifications
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="w-full lg:w-4/5 p-6 lg:p-8">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">Welcome, {email}!</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-8">
+                        We're happy to see you here. Explore your account options using the navigation on the left.
+                    </p>
+                    <div id="tab-content" class="space-y-4">
+                        <p class="text-gray-700 dark:text-gray-300">
+                            This is the overview section. Here you can manage your profile and account settings. Navigate through the tabs to explore other options.
+                        </p>
+                        <form action="/api/auth/signout" method="post" class="mt-6">
+                            <button
+                                type="submit"
+                                class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                            >
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

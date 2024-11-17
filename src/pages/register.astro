@@ -1,15 +1,46 @@
 ---
+export const prerender = true;
+
 import Layout from '@/layouts/HTML.astro';
 ---
 
 <Layout title="Register">
-	<h1>Register</h1>
-	<p>Already have an account? <a href="/signin">Sign in</a></p>
-	<form action="/api/auth/register" method="post">
-		<label for="email">Email</label>
-		<input type="email" name="email" id="email" />
-		<label for="password">Password</label>
-		<input type="password" name="password" id="password" />
-		<button type="submit">Register</button>
-	</form>
+	<div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sm:p-8">
+        <div class="mb-6 text-center">
+            <h1 class="text-2xl font-bold">Register</h1>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Already have an account? <a href="/signin" class="text-blue-600 dark:text-blue-400 hover:underline">Sign in</a>
+            </p>
+        </div>
+        <form action="/api/auth/register" method="post" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium">Email</label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    class="w-full px-4 py-2 mt-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100"
+                    placeholder="you@example.com"
+                />
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    required
+                    class="w-full px-4 py-2 mt-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100"
+                    placeholder="Create a strong password"
+                />
+            </div>
+            <button
+                type="submit"
+                class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
+            >
+                Register
+            </button>
+        </form>
+    </div>
 </Layout>

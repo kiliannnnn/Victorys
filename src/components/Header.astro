@@ -1,82 +1,54 @@
 ---
 import Theme from "@/components/Theme.astro";
+import { supabase } from "@/lib/supabase";
+
+const accessToken = Astro.cookies.get("sb-access-token");
+let user = null;
+
+if (accessToken) {
+    const { data, error } = await supabase.auth.getUser(accessToken.value);
+    if (data?.user) {
+        user = data.user;
+    }
+}
 ---
 
 <header class="bg-white dark:bg-gray-800 shadow-md p-4">
     <div class="container mx-auto flex items-center justify-between">
-        <div class="text-2xl font-bold text-gray-800 dark:text-white">
-            Victorys
-        </div>
+        <a href="/" class="text-2xl font-bold text-gray-800 dark:text-white">Victorys</a>
         <nav class="hidden md:flex space-x-6">
-            <a
-                href="#"
-                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >Home</a
-            >
-            <a
-                href="#"
-                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >About</a
-            >
-            <a
-                href="#"
-                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >Services</a
-            >
-            <a
-                href="#"
-                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >Contact</a
-            >
+            <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">About</a>
+            <a href="tournaments" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Tournaments</a>
+            <a href="chat" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Chat</a>
         </nav>
-
+        
         <div class="flex items-center space-x-4">
             <Theme />
+            
             <div class="relative">
-                <button
-                    id="profile-dropdown"
-                    class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
-                >
-                    <svg
-                        class="w-8 h-8"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                    >
-                        <path
-                            d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2a8 8 0 00-7.446 4.032 1 1 0 001.732 1.024A6 6 0 0110 14a6 6 0 015.714 3.056 1 1 0 001.732-1.024A8 8 0 0010 12z"
-                        ></path>
+                <button id="profile-dropdown" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2a8 8 0 00-7.446 4.032 1 1 0 001.732 1.024A6 6 0 0110 14a6 6 0 015.714 3.056 1 1 0 001.732-1.024A8 8 0 0010 12z"></path>
                     </svg>
                 </button>
-                <div
-                    id="dropdown-menu"
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg hidden"
-                >
-                    <a
-                        href="signin"
-                        class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        >Login</a
-                    >
-                    <a
-                        href="register"
-                        class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        >Register</a
-                    >
-                    <a
-                        href="signout"
-                        class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        >Logout</a
-                    >
+                <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg hidden">
+                    { user ? 
+                        <a href="/profile" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
+                        <a href="/api/auth/signout" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Logout</a>
+                        :
+                        <a href="/signin" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Login</a>
+                        <a href="/register" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Register</a>
+                    }
                 </div>
-            </div>
+            </div>               
         </div>
     </div>
 </header>
 
 <script>
-    // Profile dropdown toggle logic
     const profileDropdown = document.getElementById("profile-dropdown");
     const dropdownMenu = document.getElementById("dropdown-menu");
-
+    
     if (profileDropdown) {
         profileDropdown.addEventListener("click", () => {
             if (dropdownMenu) {
@@ -84,14 +56,13 @@ import Theme from "@/components/Theme.astro";
             }
         });
     }
-
-    // Close dropdown if clicked outside
+    
     document.addEventListener("click", (e) => {
         if (
-            profileDropdown && 
-            !profileDropdown.contains(e.target as Node) &&
-            dropdownMenu &&
-            !dropdownMenu.contains(e.target as Node)
+        profileDropdown && 
+        !profileDropdown.contains(e.target as Node) &&
+        dropdownMenu &&
+        !dropdownMenu.contains(e.target as Node)
         ) {
             dropdownMenu.classList.add("hidden");
         }
