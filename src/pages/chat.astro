@@ -3,7 +3,7 @@ export const prerender = false;
 
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import Layout from "@/layouts/HTML.astro";
-import Conversation from "@/components/Conversation.astro";
+import Message from "@/components/Message.astro";
 
 const accessToken = Astro.cookies.get("sb-access-token");
 const refreshToken = Astro.cookies.get("sb-refresh-token");
@@ -45,6 +45,15 @@ const toCurrentUser = data;
 
 const messages = fromCurrentUser?.concat(toCurrentUser);
 messages?.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
+
+const handleInserts = (payload: any) => {
+  console.log('Change received!', payload)
+}
+
+supabase
+  .channel('messages')
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleInserts)
+  .subscribe()
 ---
 
 <Layout title="Chat">
@@ -66,8 +75,6 @@ messages?.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).get
                         ))}
                     </ul>
                 </div>
-
-                <Conversation client:load currentUser=currentUser userId=userId />
                 <div class="flex-1 bg-gray-100 dark:bg-gray-900 rounded-lg p-6 flex flex-col">
                     <div id="chat-header" class="mb-6">
                         <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100" id="selected-user">
@@ -76,15 +83,7 @@ messages?.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).get
                     </div>
                     <div id="chat-box" class="flex-1 overflow-y-auto space-y-4">
                         {messages?.map((message) => (
-                            <div
-                                class={`p-4 rounded-lg ${
-                                    message.sender === currentUser.data.user?.id
-                                        ? "bg-blue-500 text-white self-end"
-                                        : "bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-                                }`}
-                            >
-                                {message.content}
-                            </div>
+                            <Message message={message} currentUser={currentUser} />
                         ))}
                     </div>
                     <form id="message-form" class="mt-6 flex">
