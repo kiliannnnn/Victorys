@@ -4,6 +4,7 @@ export const prerender = false;
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import Layout from "@/layouts/HTML.astro";
 import Message from "@/components/Message.astro";
+import { getDiscussion } from "@/lib/chat";
 
 const accessToken = Astro.cookies.get("sb-access-token");
 const refreshToken = Astro.cookies.get("sb-refresh-token");
@@ -31,29 +32,16 @@ try {
 
 const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
 const currentUser = await supabase.auth.getUser();
-
-var { data } = await supabase
-  .from('messages')
-  .select()
-  .eq('sender', currentUser.data.user?.id)
-const fromCurrentUser = data;
-var { data } = await supabase
-  .from('messages')
-  .select()
-  .eq('target', currentUser.data.user?.id)
-const toCurrentUser = data;
-
-const messages = fromCurrentUser?.concat(toCurrentUser);
-messages?.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
+const messages : any[] = [];
 
 const handleInserts = (payload: any) => {
-  console.log('Change received!', payload)
+    console.log('Change received!', payload)
 }
 
 supabase
-  .channel('messages')
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleInserts)
-  .subscribe()
+.channel('messages')
+.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleInserts)
+.subscribe()
 ---
 
 <Layout title="Chat">
@@ -65,12 +53,7 @@ supabase
                     <ul class="space-y-3">
                         {users.map((user) => (
                             <li>
-                                <button
-                                    onclick={`selectUser('${user.id}')`}
-                                    class="block w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg"
-                                >
-                                    {user.email}
-                                </button>
+                                <button onclick={""} class="block w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg"> {user.email}</button>
                             </li>
                         ))}
                     </ul>
@@ -84,19 +67,19 @@ supabase
                     <div id="chat-box" class="flex-1 overflow-y-auto space-y-4">
                         {messages?.map((message) => (
                             <Message message={message} currentUser={currentUser} />
-                        ))}
-                    </div>
-                    <form id="message-form" class="mt-6 flex">
-                        <input
+                            ))}
+                        </div>
+                        <form id="message-form" class="mt-6 flex">
+                            <input
                             type="text"
                             id="message-input"
                             placeholder="Type a message..."
                             class="flex-1 px-4 py-2 rounded-l-lg border border-gray-300 focus:ring focus:ring-blue-500 focus:outline-none"
-                        />
-                        <button
+                            />
+                            <button
                             type="submit"
                             class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
-                        >
+                            >
                             Send
                         </button>
                     </form>
