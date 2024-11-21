@@ -4,8 +4,7 @@ export const prerender = false;
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import Layout from "@/layouts/HTML.astro";
 import Message from "@/components/Message.astro";
-import { getDiscussion } from "@/lib/chat";
-
+import Chatbox from "@/components/Chat";
 const accessToken = Astro.cookies.get("sb-access-token");
 const refreshToken = Astro.cookies.get("sb-refresh-token");
 
@@ -34,14 +33,6 @@ const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
 const currentUser = await supabase.auth.getUser();
 const messages : any[] = [];
 
-const handleInserts = (payload: any) => {
-    console.log('Change received!', payload)
-}
-
-supabase
-.channel('messages')
-.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, handleInserts)
-.subscribe()
 ---
 
 <Layout title="Chat">
@@ -64,25 +55,7 @@ supabase
                             Select a user to chat
                         </h2>
                     </div>
-                    <div id="chat-box" class="flex-1 overflow-y-auto space-y-4">
-                        {messages?.map((message) => (
-                            <Message message={message} currentUser={currentUser} />
-                            ))}
-                        </div>
-                        <form id="message-form" class="mt-6 flex">
-                            <input
-                            type="text"
-                            id="message-input"
-                            placeholder="Type a message..."
-                            class="flex-1 px-4 py-2 rounded-l-lg border border-gray-300 focus:ring focus:ring-blue-500 focus:outline-none"
-                            />
-                            <button
-                            type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
-                            >
-                            Send
-                        </button>
-                    </form>
+                    <Chatbox client:load />
                 </div>
             </div>
         </div>
