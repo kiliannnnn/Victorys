@@ -23,7 +23,7 @@ type Message = {
 }
 
 const loadMessages = async () => {
-    const { data, error } = await supabase.from<Message>('messages').select()
+    const { data, error } = await supabase.from('messages').select()
     console.log('load messages', data)
     if (error) {
         console.log(error)
@@ -63,7 +63,7 @@ const Chatbox: Component = () => {
     
     async function submitted() {
         console.log(inputMessage())
-        const { data, error } = await supabase.from<Message>('messages').insert({
+        const { data, error } = await supabase.from('messages').insert({
             task: inputMessage(),
             is_complete: false,
         })
