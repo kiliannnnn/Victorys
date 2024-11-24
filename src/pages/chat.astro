@@ -3,8 +3,8 @@ export const prerender = false;
 
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import Layout from "@/layouts/HTML.astro";
-import Message from "@/components/Message.astro";
-import Chatbox from "@/components/Chat";
+import Chatbox from "@/components/Chatbox";
+
 const accessToken = Astro.cookies.get("sb-access-token");
 const refreshToken = Astro.cookies.get("sb-refresh-token");
 
@@ -29,35 +29,15 @@ try {
     return Astro.redirect("/signin");
 }
 
-const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
-const currentUser = await supabase.auth.getUser();
-const messages : any[] = [];
-
+const users = (await supabaseAdmin?.auth.admin.listUsers())?.data?.users || [];
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
+    return Astro.redirect("/signin");
+}
 ---
 
 <Layout title="Chat">
-    <div class="bg-gray-100 dark:bg-gray-900 min-h-screen">
-        <div class="container mx-auto py-8 px-4 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex flex-col md:flex-row gap-6">
-                <div class="w-full md:w-1/5 bg-gray-200 dark:bg-gray-700 rounded-lg p-4">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Users</h2>
-                    <ul class="space-y-3">
-                        {users.map((user) => (
-                            <li>
-                                <button onclick={""} class="block w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg"> {user.email}</button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div class="flex-1 bg-gray-100 dark:bg-gray-900 rounded-lg p-6 flex flex-col">
-                    <div id="chat-header" class="mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100" id="selected-user">
-                            Select a user to chat
-                        </h2>
-                    </div>
-                    <Chatbox client:load />
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4">
+    <Chatbox client:load users={users} senderUser={user} />
+  </div>
 </Layout>
