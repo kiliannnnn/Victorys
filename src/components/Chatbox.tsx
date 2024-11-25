@@ -2,7 +2,7 @@ import { createSignal, createEffect, For, Show, onCleanup } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { supabase } from '@/lib/supabase';
 import type { Message as SupabaseMessage } from "@/lib/supabase";
-import type { User as SupabaseUser} from "@supabase/auth-js";
+import type { User as SupabaseUser } from "@supabase/auth-js";
 
 type ChatboxProps = {
   users: SupabaseUser[];
@@ -79,69 +79,81 @@ export default function Chatbox({ users, senderUser }: ChatboxProps) {
   };
 
   return (
-    <div class="flex flex-col gap-6">
-      <div class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg">
-        <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Users</h2>
-        <ul class="space-y-3">
-          <For each={users}>
-            {(u) => (
-              <li>
-                <button
-                  onclick={() => setTargetUser(u)}
-                  class="block w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
-                >
-                  {u.email}
-                </button>
-              </li>
-            )}
-          </For>
-        </ul>
-      </div>
+    <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-8">
+      <div class="container mx-auto px-4 lg:px-8">
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col lg:flex-row overflow-hidden">
+          <nav class="bg-gray-200 dark:bg-gray-700 w-full lg:w-1/5">
+            <ul>
+              <For each={users}>
+                {(user) => (
+                  <li>
+                    <button
+                      onclick={() => setTargetUser(user)}
+                      class="block w-full text-left text-gray-900 dark:text-gray-100 font-semibold py-1 px-4 hover:bg-blue-100 dark:hover:bg-blue-900"
+                    >
+                      {user.email}
+                    </button>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </nav>
 
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-lg flex flex-col h-[500px]">
-        <Show when={targetUser()} fallback={<p class="text-center text-gray-500">Select a user to start chatting.</p>}>
-          <div class="flex-1 overflow-y-auto space-y-4">
-            <For each={messages}>
-              {(message) => (
-                <div
-                  classList={{
-                    'flex justify-end': message.sender === senderUser.id,
-                    'flex justify-start': message.sender !== senderUser.id,
-                  }}
-                >
-                  <div
-                    classList={{
-                      'max-w-xs px-4 py-2 rounded-lg bg-blue-500 text-white':
-                        message.sender === senderUser.id,
-                      'max-w-xs px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600':
-                        message.sender !== senderUser.id,
-                    }}
-                  >
-                    <p>{message.content}</p>
-                  </div>
+          <div class="w-full lg:w-4/5 p-6 lg:p-8">
+            <Show
+              when={targetUser()}
+              fallback={
+                <div class="text-center text-gray-500">
+                  Select a user to start chatting.
                 </div>
-              )}
-            </For>
-            <div ref={messagesEndRef} />
+              }
+            >
+              <div class="flex flex-col h-[500px]">
+                <div class="flex-1 overflow-y-auto space-y-4">
+                  <For each={messages}>
+                    {(message) => (
+                      <div
+                        classList={{
+                          'flex justify-end': message.sender === senderUser.id,
+                          'flex justify-start': message.sender !== senderUser.id,
+                        }}
+                      >
+                        <div
+                          classList={{
+                            'max-w-xs px-4 py-2 rounded-lg bg-blue-500 text-white':
+                              message.sender === senderUser.id,
+                            'max-w-xs px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600':
+                              message.sender !== senderUser.id,
+                          }}
+                        >
+                          <p>{message.content}</p>
+                        </div>
+                      </div>
+                    )}
+                  </For>
+                  <div ref={messagesEndRef} />
+                </div>
+                <form onSubmit={handleSendMessage} class="mt-4">
+                  <div class="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newMessage()}
+                      onInput={(e) => setNewMessage(e.currentTarget.value)}
+                      placeholder="Type a message..."
+                      class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      type="submit"
+                      class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      Send
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </Show>
           </div>
-          <form onSubmit={handleSendMessage} class="mt-4">
-            <div class="flex space-x-2">
-              <input
-                type="text"
-                value={newMessage()}
-                onInput={(e) => setNewMessage(e.currentTarget.value)}
-                placeholder="Type a message..."
-                class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="submit"
-                class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Send
-              </button>
-            </div>
-          </form>
-        </Show>
+        </div>
       </div>
     </div>
   );
