@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import Layout from "@/layouts/HTML.astro";
+import { supabase } from "@/lib/supabase";
 
 const { cookies, redirect } = Astro;
 
@@ -11,42 +12,75 @@ const refreshToken = cookies.get("sb-refresh-token");
 if (!accessToken || !refreshToken) {
     return redirect("/login");
 }
+
+const { data } = await supabase.auth.getUser(accessToken.value);
+let user = null;
+if (data?.user) {
+    user = data.user;
+}
+
+const { data: userQueue } = await supabase
+    .from("duels_queue")
+    .select("*")
+    .eq("user", user?.id)
+    .single();
+
+let { data: games } = await supabase
+  .from('games')
+  .select('*')
+
+const queuedGameId = userQueue?.game || null;
 ---
 
 <Layout title="Join Queue">
-    <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sm:p-8">
+    <div class="w-full max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sm:p-8">
         <div class="mb-6 text-center">
             <h1 class="text-2xl font-bold">Join Queue</h1>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                Waiting for an opponent in your favorite game? Join the queue and get matched!
+                Waiting for an opponent? Join the queue for your favorite game and get matched!
             </p>
         </div>
-        <form action="/api/duel/queue/join" method="post" class="space-y-6">
-            <div>
-                <label for="game_id" class="block text-sm font-medium">Select Game</label>
-                <select
-                    name="game_id"
-                    id="game_id"
-                    required
-                    class="w-full px-4 py-2 mt-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-gray-100"
-                >
-                    <option value="10">Chess</option>
-                    <option value="11">Checkers</option>
-                    <option value="12">Poker</option>
-                </select>
-            </div>
-            <button
-                type="submit"
-                class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
-            >
-                Join Queue
-            </button>
-        </form>
 
-        <!-- Matchmaking Button -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {games?.map((game) => (
+                <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md text-center">
+                    <h2 class="text-lg font-bold">{game.name}</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        Join the queue to find a match for {game.name}.
+                    </p>
+                    {queuedGameId === game.id ? (
+                        <form action="/api/duel/queue/leave" method="post" class="mt-4">
+                            <input type="hidden" name="game_id" value={game.id} />
+                            <button
+                                type="submit"
+                                class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
+                            >
+                                Leave Queue
+                            </button>
+                        </form>
+                    ) : (
+                        <form action="/api/duel/queue/join" method="post" class="mt-4">
+                            <input type="hidden" name="game_id" value={game.id} />
+                            <button
+                                type="submit"
+                                class={`w-full py-2 px-4 ${
+                                    queuedGameId
+                                        ? "bg-gray-400 text-gray-800 cursor-not-allowed"
+                                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                                } font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900`}
+                                disabled={queuedGameId !== null}
+                            >
+                                {queuedGameId ? "Join Disabled" : "Join Queue"}
+                            </button>
+                        </form>
+                    )}
+                </div>
+            ))}
+        </div>
+
         <button
             id="matchmake"
-            class="w-full mt-4 py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
+            class="w-full mt-8 py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
         >
             Find Opponent
         </button>
@@ -61,13 +95,13 @@ if (!accessToken || !refreshToken) {
                 if (response.ok) {
                     const { duel } = await response.json();
                     alert(`Duel found! Opponent ID: ${duel.player_2}`);
-                    clearInterval(interval); // Stop polling once a duel is found
-                    window.location.href = `/duel/${duel.id}`; // Redirect to the duel page
+                    clearInterval(interval);
+                    window.location.href = `/duel/${duel.id}`;
                 }
             } catch (error) {
                 console.error("Error checking duel status:", error);
             }
-        }, 5000); // Poll every 5 seconds
+        }, 5000);
     }
 
     pollForDuelStatus();

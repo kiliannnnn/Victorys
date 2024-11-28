@@ -2,7 +2,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { supabase } from "@/lib/supabase";
 
-// /api/duel/queue/join
+// /api/duel/queue/leave
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     const formData = await request.formData();
     const gameId = formData.get("game_id")?.toString();
@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         );
     }
 
-    const { data, error: authError} = await supabase.auth.getUser(accessToken.value);
+    const { data, error: authError } = await supabase.auth.getUser(accessToken.value);
     let user = null;
     if (data?.user) {
         user = data.user;
@@ -34,24 +34,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         );
     }
 
-    const { data: existingQueue } = await supabase
+    const { error: deleteError } = await supabase
         .from("duels_queue")
-        .select("*")
-        .eq("user", user.id);
+        .delete()
+        .eq("user", user.id)
 
-    let userQueue = 0;
-    userQueue = <number>existingQueue?.length;
-    if (userQueue > 0) {
+    if (deleteError) {
         return new Response(
-            JSON.stringify({ message: "You are already in the queue" }),
-            { status: 200 }
-        );
-    }
-
-    const { error: insertError } = await supabase.from("duels_queue").insert([{ user: user.id, game: gameId }]);
-    if (insertError) {
-        return new Response(
-            JSON.stringify({ message: insertError.message }),
+            JSON.stringify({ message: deleteError.message }),
             { status: 500 }
         );
     }
