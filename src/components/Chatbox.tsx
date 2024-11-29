@@ -79,7 +79,7 @@ export default function Chatbox({ users, senderUser }: ChatboxProps) {
   };
 
   return (
-    <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-8">
+    <div class="bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div class="container mx-auto px-4 lg:px-8">
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col lg:flex-row overflow-hidden">
           <nav class="bg-gray-200 dark:bg-gray-700 w-full lg:w-1/5">
@@ -89,7 +89,7 @@ export default function Chatbox({ users, senderUser }: ChatboxProps) {
                   <li>
                     <button
                       onclick={() => setTargetUser(user)}
-                      class="block w-full text-left text-gray-900 dark:text-gray-100 font-semibold py-1 px-4 hover:bg-blue-100 dark:hover:bg-blue-900"
+                      class="block w-full text-left text-gray-500 dark:text-gray-400 py-1 px-4 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 hover:dark:text-gray-100"
                     >
                       {user.email}
                     </button>
