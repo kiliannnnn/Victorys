@@ -7,10 +7,11 @@ import type { User as SupabaseUser } from "@supabase/auth-js";
 type ChatboxProps = {
   users: SupabaseUser[];
   senderUser: SupabaseUser;
+  defaultTarget: SupabaseUser | null;
 };
 
-export default function Chatbox({ users, senderUser }: ChatboxProps) {
-  const [targetUser, setTargetUser] = createSignal<SupabaseUser | null>(null);
+export default function Chatbox({ users, senderUser, defaultTarget }: ChatboxProps) {
+  const [targetUser, setTargetUser] = createSignal<SupabaseUser | null>(defaultTarget ?? null);
   const [messages, setMessages] = createStore<SupabaseMessage[]>([]);
   const [newMessage, setNewMessage] = createSignal('');
   let messagesEndRef: HTMLDivElement | undefined;
@@ -46,7 +47,7 @@ export default function Chatbox({ users, senderUser }: ChatboxProps) {
     });
   });
 
-  const fetchMessages = async () => {
+  const fetchMessages = async () => {    
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -89,7 +90,8 @@ export default function Chatbox({ users, senderUser }: ChatboxProps) {
                   <li>
                     <button
                       onclick={() => setTargetUser(user)}
-                      class="block w-full text-left text-gray-500 dark:text-gray-400 py-1 px-4 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 hover:dark:text-gray-100"
+                      class={user.id == targetUser()?.id ? 'block w-full text-left text-gray-900 dark:text-gray-100 font-semibold py-1 px-4 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800' :
+                      'block w-full text-left text-gray-500 dark:text-gray-400 py-1 px-4 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-900 hover:dark:text-gray-100'}
                     >
                       {user.email}
                     </button>

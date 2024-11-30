@@ -32,21 +32,22 @@ export type Message = {
   target: string;
 };
 
+export type Duel = {
+  id: number;
+  created: string;
+  updated: string;
+  player_1: string;
+  player_2: string;
+  status: string;
+};
 
-/* async function getDiscussion(user1: SupabaseUser, user2: SupabaseUser) {
-  const { data: fromCurrentUser } = await supabase
-      .from('messages')
-      .select()
-      // .eq('sender', user1.id)
-      .eq('target', user2.id);
-
-  const { data: toCurrentUser } = await supabase
-      .from('messages')
-      .select()
-      .eq('sender', user2.id);
-      // .eq('target', user1.id);
-
-  const messages = [...(fromCurrentUser || []), ...(toCurrentUser || [])];
-  messages.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
-  return messages;
-} */
+export type Tournament = {
+  id: number;
+  created: string;
+  updated: string;
+  name: string;
+  description: string;
+  status: string;
+  max_participants: number;
+  num_winners: number;
+};
