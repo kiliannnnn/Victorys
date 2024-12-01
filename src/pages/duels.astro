@@ -4,13 +4,13 @@ export const prerender = false;
 import Layout from "@/layouts/HTML.astro";
 import { supabase } from "@/lib/supabase";
 
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
 
 if (!accessToken || !refreshToken) {
-    return redirect("/signin");
+    return Astro.redirect("/signin");
 }
 
 const { data } = await supabase.auth.getUser(accessToken.value);

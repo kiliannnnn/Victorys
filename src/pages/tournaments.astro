@@ -3,7 +3,7 @@ export const prerender = false;
 
 import Layout from "@/layouts/HTML.astro";
 import { supabase } from "@/lib/supabase";
-import type { Tournament } from '@/lib/supabase';
+// import type { Tournament } from '@/lib/supabase';
 
 let { data: tournaments } = await supabase
   .from('tournaments')

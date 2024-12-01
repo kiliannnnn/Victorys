@@ -38,5 +38,5 @@ const filteredUsers = users.filter(u => u.id !== user.id);
 ---
 
 <Layout title="Chat">
-    <Chatbox client:load users={filteredUsers} senderUser={user} />
+    <Chatbox client:load users={filteredUsers} senderUser={user} defaultTarget={null}/>
 </Layout>
