@@ -1,6 +1,9 @@
 ---
+export const prerender = false;
+
 import Theme from "@/components/Theme.astro";
 import { supabase } from "@/lib/supabase";
+import Chatbox from "@/components/Chatbox";
 
 const accessToken = Astro.cookies.get("sb-access-token");
 let user = null;
@@ -19,12 +22,24 @@ if (accessToken) {
         <nav class="flex space-x-6">
             <a href="duels" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Duels</a>
             <a href="tournaments" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Tournaments</a>
-            <a href="chat" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Chat</a>
         </nav>
         
         <div class="flex items-center space-x-4">
             <Theme />
-            
+
+            { user ? 
+            <div class="relative">
+                <button id="btn-chatbox" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
+                    <svg class="w-6 h-6 text-gray-900 dark:text-gray-100" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 100 20c1.657 0 3.225-.406 4.615-1.167L21 21l-1.833-4.615A9.964 9.964 0 0012 22a10 10 0 100-20zm-4 7h8v2H8V9zm0 4h5v2H8v-2z" />
+                    </svg>
+                </button>
+                <div id="chatbox" class="absolute right-0 mt-2 w-96 max-w-lg sm:max-w-[50vw] bg-white dark:bg-gray-700 rounded-md shadow-lg hidden z-50">
+                    <Chatbox client:load currentUser={user}/>
+                </div>
+            </div>
+            : ''}
+
             <div class="relative">
                 <button id="profile-dropdown" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -40,10 +55,32 @@ if (accessToken) {
                         <a href="/register" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Register</a>
                     }
                 </div>
-            </div>               
+            </div>
         </div>
     </div>
 </header>
+
+<script>
+    const chatboxToggle = document.getElementById("btn-chatbox");
+    const chatbox = document.getElementById("chatbox");
+
+    chatboxToggle?.addEventListener("click", () => {
+        if (chatbox) {
+            chatbox.classList.toggle("hidden");
+        }
+    });
+
+    document.addEventListener("click", (e) => {
+        if (
+            chatboxToggle && 
+            !chatboxToggle.contains(e.target as Node) &&
+            chatbox &&
+            !chatbox.contains(e.target as Node)
+        ) {
+            chatbox.classList.add("hidden");
+        }
+    });
+</script>
 
 <script>
     const profileDropdown = document.getElementById("profile-dropdown");

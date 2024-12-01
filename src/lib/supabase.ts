@@ -29,7 +29,7 @@ export type Message = {
   deleted: string;
   content: string;
   sender: string;
-  target: string;
+  destination: number;
 };
 
 export type Duel = {
@@ -51,3 +51,20 @@ export type Tournament = {
   max_participants: number;
   num_winners: number;
 };
+
+export type Group = {
+  id: number;
+  created: string;
+  updated: string;
+  deleted: string;
+  name: string;
+}
+
+export type Member = {
+  id: number;
+  created: string;
+  updated: string;
+  deleted: string;
+  user: string;
+  group: number;
+}
