@@ -56,5 +56,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         );
     }
 
-    return redirect("/duels");
+    return redirect("/api/duel/queue/match");
 };
