@@ -1,0 +1,89 @@
+---
+interface Props {
+  message: string;
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "top-center" | "bottom-center";
+  type?: "success" | "error" | "info" | "warning";
+  visible: boolean;
+  onClose?: () => void;
+}
+
+const { message, position = "top-right", type = "info", visible, onClose } = Astro.props;
+
+const getClasses = (type: string) => {
+  switch (type) {
+    case "success":
+      return "bg-green-500 text-white";
+    case "error":
+      return "bg-red-500 text-white";
+    case "warning":
+      return "bg-yellow-500 text-gray-800";
+    case "info":
+    default:
+      return "bg-blue-500 text-white";
+  }
+};
+---
+{visible && (
+  <div
+    class={`fixed z-50 p-4 rounded shadow-lg transition-transform transform ${
+      position === "top-left"
+        ? "top-4 left-4"
+        : position === "top-right"
+        ? "top-4 right-4"
+        : position === "bottom-left"
+        ? "bottom-4 left-4"
+        : position === "bottom-right"
+        ? "bottom-4 right-4"
+        : position === "top-center"
+        ? "top-4 left-1/2 -translate-x-1/2"
+        : "bottom-4 left-1/2 -translate-x-1/2"
+    } ${getClasses(type)}`}
+    role="alert"
+  >
+    <div class="flex items-center">
+      <span class="flex-1">{message}</span>
+      {onClose && (
+        <button
+          data-notif-close
+          class="ml-4 text-white hover:text-gray-300"
+          aria-label="Close notification"
+        >
+          &times;
+        </button>
+      )}
+    </div>
+  </div>
+)}
+
+<script is:inline>
+    const buttons = document.querySelectorAll('[data-notif-close]');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            onClose();
+        });
+    });
+</script>
+
+<style>
+    .fixed {
+        animation: fade-in 0.3s ease-out, slide-in 0.3s ease-out;
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-in {
+        from {
+            transform: translateY(-10%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+</style>

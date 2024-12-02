@@ -2,17 +2,17 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { supabase } from "@/lib/supabase";
 
-export const POST: APIRoute = async ({ cookies }) => {
+export const POST: APIRoute = async ({ cookies, redirect }) => {
+
+    // user auth check
     const accessToken = cookies.get("sb-access-token");
-    
     if (!accessToken) {
         return new Response(
             JSON.stringify({ message: "Unauthorized" }),
             { status: 401 }
         );
     }
-    
-    const { data, error: authError} = await supabase.auth.getUser(accessToken.value);
+    const { data, error: authError } = await supabase.auth.getUser(accessToken.value);
     let user = null;
     if (data?.user) {
         user = data.user;
@@ -23,6 +23,7 @@ export const POST: APIRoute = async ({ cookies }) => {
             { status: 401 }
         );
     }
+    // end user auth check
     
     const { data: queueEntry, error: queueError } = await supabase
     .from("duels_queue")
@@ -79,9 +80,30 @@ export const POST: APIRoute = async ({ cookies }) => {
             { status: 500 }
         );
     }
-    
-    return new Response(
-        JSON.stringify({ message: "Duel created successfully" }),
-        { status: 200 }
-    );
+
+    const { error: notif1Error } = await supabase.from("notifications").insert({
+        user: user.id,
+        title: "Match Found!",
+        content: `Found a match against ${opponent.email}`,
+    });
+    if (notif1Error) {
+        return new Response(
+            JSON.stringify({ message: "Failed to send a notification" }),
+            { status: 500 }
+        );
+    }
+
+    const { error: notif2Error } = await supabase.from("notifications").insert({
+        user: opponent.user,
+        title: "Match Found!",
+        content: `Found a match against ${user.email}`,
+    });
+    if (notif2Error) {
+        return new Response(
+            JSON.stringify({ message: "Failed to send a notification" }),
+            { status: 500 }
+        );
+    }
+
+    return redirect("/duels");
 };

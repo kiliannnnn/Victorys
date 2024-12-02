@@ -45,9 +45,6 @@ const queuedGameId = userQueue?.game || null;
             {games?.map((game) => (
                 <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md text-center">
                     <h2 class="text-lg font-bold">{game.name}</h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        Join the queue to find a match for {game.name}.
-                    </p>
                     {queuedGameId === game.id ? (
                         <form action="/api/duel/queue/leave" method="post" class="mt-4">
                             <input type="hidden" name="game_id" value={game.id} />
@@ -77,42 +74,5 @@ const queuedGameId = userQueue?.game || null;
                 </div>
             ))}
         </div>
-
-        <button
-            id="matchmake"
-            class="w-full mt-8 py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900"
-        >
-            Find Opponent
-        </button>
     </div>
 </Layout>
-
-<script>
-    async function pollForDuelStatus() {
-        const interval = setInterval(async () => {
-            try {
-                const response = await fetch("/api/duel/status");
-                if (response.ok) {
-                    const { duel } = await response.json();
-                    alert(`Duel found! Opponent ID: ${duel.player_2}`);
-                    clearInterval(interval);
-                    window.location.href = `/duel/${duel.id}`;
-                }
-            } catch (error) {
-                console.error("Error checking duel status:", error);
-            }
-        }, 5000);
-    }
-
-    pollForDuelStatus();
-
-    document.getElementById("matchmake")?.addEventListener("click", async () => {
-        try {
-            const response = await fetch("/api/duel/queue/match", { method: "POST" });
-            const result = await response.json();
-            alert(result.message);
-        } catch (error) {
-            console.error("Error initiating matchmaking:", error);
-        }
-    });
-</script>

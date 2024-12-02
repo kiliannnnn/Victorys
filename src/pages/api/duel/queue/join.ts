@@ -4,9 +4,8 @@ import { supabase } from "@/lib/supabase";
 
 // /api/duel/queue/join
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
-    const formData = await request.formData();
-    const gameId = formData.get("game_id")?.toString();
 
+    // user auth check
     const accessToken = cookies.get("sb-access-token");
     if (!accessToken) {
         return new Response(
@@ -14,8 +13,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
             { status: 401 }
         );
     }
-
-    const { data, error: authError} = await supabase.auth.getUser(accessToken.value);
+    const { data, error: authError } = await supabase.auth.getUser(accessToken.value);
     let user = null;
     if (data?.user) {
         user = data.user;
@@ -26,6 +24,10 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
             { status: 401 }
         );
     }
+    // end user auth check
+
+    const formData = await request.formData();
+    const gameId = formData.get("game_id")?.toString();
 
     if (!user.id || !gameId) {
         return new Response(
@@ -56,5 +58,29 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         );
     }
 
-    return redirect("/api/duel/queue/match");
+    // TODO : change url
+    const response = await fetch("http://localhost:4321/api/duel/queue/match", {
+        method: "POST",
+        headers: {
+            Cookie: `sb-access-token=${accessToken.value}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorDetails = await response.json();
+        return new Response(
+            JSON.stringify({
+                message: "Failed to match players",
+                details: errorDetails.message || "Unknown error",
+            }),
+            { status: response.status }
+        );
+    }
+
+    /* return new Response(
+        JSON.stringify({ message: "Matchmaking initiated" }),
+        { status: 200 }
+    ); */
+
+    return redirect("/duels");
 };

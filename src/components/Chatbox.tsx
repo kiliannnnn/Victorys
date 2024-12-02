@@ -13,7 +13,6 @@ export default function Chatbox({ currentUser }: ChatboxProps) {
   const [targetGroup, setTargetGroup] = createSignal<SupabaseGroup | null>();
   const [messages, setMessages] = createStore<SupabaseMessage[]>([]);
   const [newMessage, setNewMessage] = createSignal('');
-  let messagesEndRef: HTMLDivElement | undefined;
 
   createEffect(() => {    
     fetchGroups();
