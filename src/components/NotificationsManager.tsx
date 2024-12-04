@@ -1,91 +1,112 @@
-import { createSignal, createEffect, For, Show, onCleanup } from 'solid-js';
-import NotificationComp from "./Notification.astro";
+import { createSignal, onMount } from "solid-js";
+import NotificationComp from "@/components/Notification";
 import { supabase } from "@/lib/supabase";
 import type { User as SupabaseUser } from "@supabase/auth-js";
 
+type NotificationsManagerProps = {
+  currentUser: SupabaseUser;
+  position: "bottom-left" | "bottom-right";
+};
+
 interface Notification {
   id: number;
+  title: string;
   message: string;
   type: "success" | "error" | "info" | "warning";
-  position: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "top-center" | "bottom-center";
 }
 
-const NotificationsManager = () => {
+export default function NotificationsManager({
+  currentUser,
+  position = "bottom-right",
+}: NotificationsManagerProps) {
   const [notifications, setNotifications] = createSignal<Notification[]>([]);
 
-  createEffect(() => {
-    const setupSubscription = async () => {
-      console.log("aaaa");
-      
-      const userData = await fetchUser();
-      if (!userData) return;
-  
-      const subscription = supabase
-        .channel('public:notifications')
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user=eq.${userData.id}` },
-          (payload) => {
-            console.log('Notification payload:', payload);
-          }
-        )
-        .subscribe();
-  
-      onCleanup(() => {
-        subscription.unsubscribe();
-      });
-    };
-  
-    setupSubscription();
+  onMount(async () => {
+    await fetchUnseen();
   });
-  
 
-  const fetchUser = async (): Promise<SupabaseUser | null> => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.error('Error fetching user:', error);
-      return null;
-    }
-    return data.user;
-  };
-  
+  const subscription = supabase
+    .channel(`notifications-${currentUser.id}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user=eq.${currentUser.id}`,
+      },
+      (payload) => {
+        addNotification(
+          payload.new.id,
+          payload.new.title,
+          payload.new.content,
+          "info"
+        );
+      }
+    )
+    .subscribe();
 
   const addNotification = (
-    message: string, 
-    type: Notification["type"], 
-    position: Notification["position"]
+    id: number,
+    title: string,
+    message: string,
+    type: Notification["type"]
   ) => {
-    const id = Date.now();
     setNotifications((prev) => [
+      { id, title, message, type },
       ...prev,
-      { id, message, type, position },
     ]);
-  
-    setTimeout(() => removeNotification(id), 5000);
   };
-  
 
   const removeNotification = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  if (typeof window !== "undefined") {
-    window.addNotification = addNotification;
-  }
+  const markAsRead = async (id: number) => {
+    const { error } = await supabase
+      .from("notifications")
+      .update({ status: "seen" })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Failed to mark notification as read:", error);
+    } else {
+      removeNotification(id);
+    }
+  };
+
+  const fetchUnseen = async () => {
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("*")
+      .eq("user", currentUser.id)
+      .eq("status", "unseen")
+      .order("created", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching notifications:", error);
+    } else {
+      data.forEach((element) => {
+        addNotification(element.id, element.title, element.content, "success");
+      });
+    }
+  };
+
+  const managerClass = position === "bottom-left" ? "bottom-4 left-4" : "bottom-4 right-4";
 
   return (
-    <div>
+    <div class={`fixed ${managerClass} space-y-2 pointer-events-none z-50`}>
       {notifications().map((notification) => (
         <NotificationComp
+          title={notification.title}
           message={notification.message}
-          position={notification.position}
           type={notification.type}
           visible={true}
+          position={position}
           onClose={() => removeNotification(notification.id)}
+          onRead={() => markAsRead(notification.id)}
         />
       ))}
     </div>
   );
-};
-
-export default NotificationsManager;
+}

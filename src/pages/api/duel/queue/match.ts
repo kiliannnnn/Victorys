@@ -84,7 +84,7 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
     const { error: notif1Error } = await supabase.from("notifications").insert({
         user: user.id,
         title: "Match Found!",
-        content: `Found a match against ${opponent.email}`,
+        content: `Found a match`,
     });
     if (notif1Error) {
         return new Response(
@@ -96,7 +96,7 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
     const { error: notif2Error } = await supabase.from("notifications").insert({
         user: opponent.user,
         title: "Match Found!",
-        content: `Found a match against ${user.email}`,
+        content: `Found a match`,
     });
     if (notif2Error) {
         return new Response(

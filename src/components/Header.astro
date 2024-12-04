@@ -2,18 +2,9 @@
 export const prerender = false;
 
 import Theme from "@/components/Theme.astro";
-import { supabase } from "@/lib/supabase";
 import Chatbox from "@/components/Chatbox";
 
-const accessToken = Astro.cookies.get("sb-access-token");
-let user = null;
-
-if (accessToken) {
-    const { data } = await supabase.auth.getUser(accessToken.value);
-    if (data?.user) {
-        user = data.user;
-    }
-}
+const { user } = Astro.props
 ---
 
 <header class="bg-white dark:bg-gray-800 shadow-md p-4">

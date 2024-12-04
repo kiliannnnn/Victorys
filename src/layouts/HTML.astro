@@ -1,7 +1,10 @@
 ---
+export const prerender = false;
+
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import NotificationsManager from "@/components/NotificationsManager";
+import { supabase } from "@/lib/supabase";
 // import { getLangFromUrl } from "../i18n/utils";
 
 // const lang = getLangFromUrl(Astro.url);
@@ -12,6 +15,16 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const accessToken = Astro.cookies.get("sb-access-token");
+let user = null;
+
+if (accessToken) {
+    const { data } = await supabase.auth.getUser(accessToken.value);
+    if (data?.user) {
+        user = data.user;
+    }
+}
 ---
 
 <!DOCTYPE html>
@@ -25,11 +38,11 @@ const { title } = Astro.props;
 		<title>{title} - Victorys</title>
 	</head>
 	<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-		<Header />
+		<Header user={user}/>
 		<main class="container mx-auto px-4 py-6">
 			<slot />
 		</main>
 		<Footer />
-		<NotificationsManager />
+		{ user ? <NotificationsManager client:load currentUser={user} position="bottom-left"/> : ''}
 	</body>
 </html>
