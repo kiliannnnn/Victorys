@@ -1,6 +1,7 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
 import { supabase } from "@/lib/supabase";
+import type { Group } from "@/lib/supabase";
 
 export const POST: APIRoute = async ({ cookies, redirect }) => {
 
@@ -54,12 +55,94 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
             { status: 200 }
         );
     }
+
+    const { data: members, error: groupError } = await supabase
+    .from("members")
+    .select("*")
+    .in('user', [user.id, opponent.user]);
+    if (groupError) {
+        return new Response(
+            JSON.stringify({ message: "Failed to retrieve groups" }),
+            { status: 500 }
+        );
+    }
+
+    const groupCounts = members.reduce((acc, member) => {
+        acc[member.group] = (acc[member.group] || 0) + 1;
+        return acc;
+    }, {});
+  
+    const privateGroups = Object.keys(groupCounts)
+        .filter(groupId => groupCounts[groupId] === 2)
+        .map(Number);
+
+    const { data: groups, error: groupsError } = await supabase
+    .from("groups")
+    .select("*")
+    .in('id', privateGroups)
+    .eq("private", true);
+    if (groupsError) {
+        return new Response(
+            JSON.stringify({ message: "Failed to retrieve groups" }),
+            { status: 500 }
+        );
+    }
+    let groupId: number = groups[0]?.id;
+
+    if (groups.length == 0) {
+        const { data: dataGroup, error: groupError } = await supabase
+        .from('groups')
+        .insert([
+            { name: '' },
+        ])
+        .select()
+        .single();
+
+        if (groupsError) {
+            return new Response(
+                JSON.stringify({ message: "Failed to create new group" }),
+                { status: 500 }
+            );
+        }
+
+        groupId = dataGroup.id;
+
+        const { data: addMembersData, error: addMembersError } = await supabase
+        .from('members')
+        .insert([
+        { user: user.id, group: groupId },
+        { user: opponent.user, group: groupId },
+        ])
+        .select();
+        
+        if (addMembersError) {
+            return new Response(
+                JSON.stringify({ message: "Failed to create new group" }),
+                { status: 500 }
+            );
+        }
+    }
+
+    const { data: msgData, error: msgError } = await supabase
+    .from('messages')
+    .insert([
+    { content: 'Confirmer le duel ?', sender: "d2b0108c-6a2d-499f-96b7-5113fe40b85c", destination: groupId },
+    ])
+    .select();
+
+    if (msgError) {
+        return new Response(
+            JSON.stringify({ message: "Failed to send message into the new group" }),
+            { status: 500 }
+        );
+    }
     
     const { error: duelError } = await supabase.from("duels").insert({
         player_1: user.id,
         player_2: opponent.user,
         game: gameId,
         status: "in_progress",
+        group: groupId,
     });
     
     if (duelError) {
@@ -81,26 +164,17 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
         );
     }
 
-    const { error: notif1Error } = await supabase.from("notifications").insert({
-        user: user.id,
-        title: "Match Found!",
-        content: `Found a match`,
-    });
-    if (notif1Error) {
-        return new Response(
-            JSON.stringify({ message: "Failed to send a notification" }),
-            { status: 500 }
-        );
-    }
+    const { data: notifData, error: notifError } = await supabase
+    .from('notifications')
+    .insert([
+    { user: user.id, title: "Match found!", content: "Found a match" },
+    { user: opponent.user, title: "Match found!", content: "Found a match" },
+    ])
+    .select();
 
-    const { error: notif2Error } = await supabase.from("notifications").insert({
-        user: opponent.user,
-        title: "Match Found!",
-        content: `Found a match`,
-    });
-    if (notif2Error) {
+    if (notifError) {
         return new Response(
-            JSON.stringify({ message: "Failed to send a notification" }),
+            JSON.stringify({ message: "Failed to send notifications" }),
             { status: 500 }
         );
     }

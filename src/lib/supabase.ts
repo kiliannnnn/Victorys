@@ -52,12 +52,13 @@ export type Tournament = {
   num_winners: number;
 };
 
-export type Group = {
+export interface Group {
   id: number;
   created: string;
   updated: string;
   deleted: string;
   name: string;
+  private: boolean;
 }
 
 export type Member = {
