@@ -1,53 +1,53 @@
-# 🎮 IMIN - Video Game Matchmaking and Tournament Platform 🎮
+# 🇫🇷 **IMIN - Plateforme de Matchmaking et Tournois de Jeux Vidéo**  
 
-IMIN is a platform that allows players to participate in **duels** and **tournaments** across various video games. It facilitates matchmaking, real-time chat, and automated match management to ensure smooth player interaction and competitive gameplay.
-
----
-
-## 📋 **Core Features**
-
-1. **User Management**
-   - Authentication (login, registration, logout)
-   - Profile management
-
-2. **Duels**
-   - Queue system for real-time 1v1 matches
-   - Dedicated real-time chat for organizing duels and verifying steps
-
-3. **Tournaments**
-   - Join scheduled tournaments with defined start times
-   - Automated matchmaking for tournament progression
-   - Rewards distributed based on player performance
-
-4. **Currency System**
-   - **Gold Tickets** (purchasable on the platform)
-   - **Silver Tickets** (periodically awarded for free to active players)
-
-5. **Real-Time Chat**
-   - Instant private messaging between players
-   - Server-side messages to manage duel progression and results
-
-6. **Automated Match Management**
-   - Step-by-step validation of duels (matchmaking → agreement → completion → validation)
-   - Handling disputes if players disagree on match results
-
-7. **Results and Rankings**
-   - Display tournament rankings and match results dynamically
+IMIN est une plateforme permettant aux joueurs de participer à des **duels** et **tournois** dans divers jeux vidéo. Elle facilite la mise en relation, le chat en temps réel et la gestion automatisée des matchs pour une expérience fluide et compétitive.  
 
 ---
 
-## ⚙️ **Technologies Used**
+## 📋 **Fonctionnalités Principales**
+
+1. **Gestion des utilisateurs**  
+   - Authentification (connexion, inscription, déconnexion)  
+   - Gestion du profil  
+
+2. **Duels**  
+   - File d'attente pour des matchs en temps réel  
+   - Chat en temps réel pour organiser les étapes des duels  
+
+3. **Tournois**  
+   - Participation aux tournois programmés avec heure de début définie  
+   - Progression automatique des matchs  
+   - Récompenses selon les performances des joueurs  
+
+4. **Système de monnaie**  
+   - **Tickets d'or** (achetables via la plateforme)  
+   - **Tickets d'argent** (distribués régulièrement aux joueurs)  
+
+5. **Chat en temps réel**  
+   - Messages privés instantanés entre joueurs  
+   - Messages serveurs pour gérer la progression des duels  
+
+6. **Gestion automatisée des matchs**  
+   - Validation étape par étape des duels  
+   - Gestion des litiges en cas de désaccord  
+
+7. **Résultats et Classements**  
+   - Affichage dynamique des résultats de matchs et classements des tournois  
+
+---
+
+## ⚙️ **Technologies utilisés**
 
 - **Frontend**
-  - React with Vite
-  - TailwindCSS for styling
-  - React Query for data fetching and caching
+  - React et Vite
+  - TailwindCSS pour le style
+  - React Query pour la récupération des données et le cache
 
 - **Backend**
-  - Supabase for database, authentication, and real-time features
+  - Supabase pour la base de données, l'authentification, et les fonctionnalités en temps réel
 
 - **Testing**
-  - Vitest for unit and integration testing
+  - Vitest pour les tests unitaires et d'intégrations
 
 ---
 
@@ -114,71 +114,69 @@ IMIN is a platform that allows players to participate in **duels** and **tournam
 
 ---
 
-## 🚀 **Installation and Configuration**
+## 🚀 **Installation et Configuration**
 
-### Prerequisites  
-- Node.js and npm installed on your machine  
+### Prérequis  
+- Node.js et npm installés sur votre machine  
 
-### Steps  
+### Étapes  
 
-1. **Clone the repository**
+1. **Cloner le projet**
    ```cli
-   git clone https://github.com/kiliannnnn/IMIN.git  
-   cd IMIN  
-   ```
-   
-2. **Install dependencies**
-   ```cli
-   npm install  
-   ```
+   git clone https://github.com/username/IMIN.git  
+   cd IMIN
+   ```  
 
-3. **Configure Supabase**  
-   - Create a Supabase project on Supabase  
-   - Add your credentials to a `.env` file:  
+2. **Installer les dépendances**
+   ```cli
+   npm install
+   ```  
+
+3. **Configurer Supabase**  
+   - Créez un projet Supabase sur Supabase  
+   - Ajoutez vos informations dans un fichier `.env`:  
      VITE_SUPABASE_URL=your_supabase_url  
      VITE_SUPABASE_ANON_KEY=your_anon_key  
 
-4. **Install TailwindCSS**
+4. **Installer TailwindCSS**
    ```cli
-   npm install -D tailwindcss postcss autoprefixer  
-   npx tailwindcss init -p  
+   npm install -D tailwindcss postcss autoprefixer
+   npx tailwindcss init -p
    ```
 
-   - Update the TailwindCSS configuration in `tailwind.config.js` to include content paths  
+   - Mettez à jour la configuration de TailwindCSS dans `tailwind.config.js` pour inclure les chemins du contenu  
 
-5. **Run the development server**
+5. **Lancer le serveur de développement**
    ```cli
-   npm run dev  
+   npm run dev
    ```
 
 ---
 
-## ✅ **Testing**
+## ✅ **Tests**
 
-Run unit and integration tests using Vitest:
+Lancer les tests unitaires et d'intégration avec Vitest:  
+
 ```cli
 npm run test  
 ```
 ---
 
-## 🚧 **Future Improvements**
+## 🚧 **Améliorations Futures**
 
-- Integration of game APIs for automated match validation  
-- Enhanced chat features with notifications and group chats  
-- Secure payment gateway for purchasing Gold Tickets  
-- Detailed player stats and leaderboards  
-
----
-
-## 📄 **License**
-
-This project is licensed under the **MIT License**.  
+- Intégration des API des jeux vidéo pour automatiser la validation des matchs  
+- Fonctionnalités de chat avancées avec notifications et groupes  
+- Passerelle de paiement sécurisée pour les Tickets d'or  
+- Statistiques détaillées des joueurs et classements  
 
 ---
 
-## 🎯 **Contributors**
+## 📄 **Licence**
 
-- **[kiliannnnn]** - Project Manager & Web Developer  
+Ce projet est sous licence **MIT**.  
 
 ---
 
+## 🎯 **Contributeurs**
+
+- **[kiliannnnn]** - Chef de Projet & Développeur Web Sénior  

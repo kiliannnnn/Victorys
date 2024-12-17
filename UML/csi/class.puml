@@ -1,0 +1,31 @@
+@startuml class
+
+' Diagramme de classe du système de surveillance (mise à jour avec les attributs du modèle donné)
+class Centrale {
+    + num_centrale : Integer
+    + etat_centrale : String
+    + activerSysteme()
+    + desactiverSysteme(code : String)
+    + declencherAlerte(zone : Zone)
+    + configurerZone(zone : Zone, duree : int)
+}
+
+class Zone {
+    + num_zone : Integer
+    + duree_mise_veille : Time
+    + etat_zone : String
+    + detecterMouvement()
+    + detecterIntrusion()
+    + mettreEnVeille(duree : int)
+}
+
+class Decodeur {
+    + num_dec : Integer
+    + code_secret : String
+    + verifierCode(code : String) : boolean
+}
+
+Centrale "1" --> "*" Zone : surveillance
+Centrale "1" --> "1" Decodeur : couplage
+
+@enduml

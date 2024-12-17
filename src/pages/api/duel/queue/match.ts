@@ -185,11 +185,15 @@ export const POST: APIRoute = async ({ cookies, redirect }) => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `destination=eq.${groupId}` },
         async (payload) => {
-            console.log('Change received!', payload);
-
             const messageContent = payload.new.content.trim();
+            console.log("content : " + messageContent);
+            
             const senderId = payload.new.sender;
+            console.log("sender : " + senderId);
+            
             const messageCreatedAt = new Date(payload.new.created);
+            console.log("createdAt : " + messageCreatedAt);
+            
 
             if (messageContent === "!start" && messageCreatedAt >= duelStartTimestamp) {
                 console.log(`Player ${senderId} sent !start`);

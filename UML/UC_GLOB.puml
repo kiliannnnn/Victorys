@@ -1,0 +1,38 @@
+@startuml "Cas d'utilisation - Application complète"
+
+title Cas d'utilisation global - Application de mise en relation de joueurs
+
+actor Joueur as U1
+actor Administrateur as U2
+
+package "Authentification" {
+    U1 --> (S'inscrire) 
+    U1 --> (Se connecter)
+    U1 --> (Modifier son profil)
+}
+
+package "Matchmaking (Duels)" {
+    U1 --> (Rejoindre une file d'attente)
+    U1 --> (Accepter/refuser un duel)
+    U1 --> (Déclarer le résultat du duel)
+}
+
+package "Gestion des Tournois" {
+    U1 --> (Rejoindre un tournoi)
+    U1 --> (Attendre le début du tournoi)
+    U1 --> (Jouer un match de tournoi)
+    U1 --> (Recevoir des récompenses)
+    U2 --> (Créer un tournoi)
+}
+
+package "Gestion des Tickets" {
+    U1 --> (Acheter des tickets d'or)
+    U1 --> (Utiliser des tickets pour rejoindre un tournoi)
+}
+
+package "Administration" {
+    U2 --> (Superviser les litiges)
+    U2 --> (Arbitrer un duel en désaccord)
+}
+
+@enduml

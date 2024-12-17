@@ -1,0 +1,53 @@
+@startuml sequence
+' Diagramme de séquence : Activation du système de surveillance
+actor Utilisateur
+participant Centrale
+participant Capteurs
+
+Utilisateur -> Centrale : Place l'interrupteur sur ON
+Centrale -> Centrale : Démarre un délai de 2 minutes
+alt Après 2 minutes
+    Centrale -> Capteurs : Active tous les capteurs des zones
+    Capteurs --> Centrale : Confirme l'activation
+end
+
+
+
+
+
+' Diagramme de séquence : Désactivation du système de surveillance
+actor Utilisateur
+participant Clavier
+participant Centrale
+participant Décodeur
+participant Sirène
+
+Utilisateur -> Clavier : Saisit le code secret
+Clavier -> Décodeur : Transmet le code
+Décodeur -> Centrale : Valide le code
+alt Code correct
+    Centrale -> Capteurs : Désactive les capteurs
+    Centrale -> Sirène : Arrête la sirène (si en alerte)
+    Centrale -> Centrale : Place l'interrupteur sur OFF
+else Code incorrect
+    Clavier --> Utilisateur : Indique que le code est incorrect
+end
+
+
+
+
+
+' Diagramme de séquence : Mise en marche de la sirène
+participant Capteurs
+participant Centrale
+participant Sirène
+
+Capteurs -> Centrale : Détecte un mouvement ou une intrusion
+Centrale -> Centrale : Démarre le délai de veille (15 s - 1 min)
+alt Aucun code saisi dans le délai
+    Centrale -> Sirène : Active la sirène
+    Sirène --> Centrale : Confirme l'alerte
+else Code saisi à temps
+    Centrale -> Centrale : Désactive l'alerte
+end
+@enduml

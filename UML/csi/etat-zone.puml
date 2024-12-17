@@ -1,0 +1,34 @@
+@startuml etat-zone
+skinparam backgroundColor LightYellow
+skinparam state {
+  StartColor MediumBlue
+  EndColor Red
+  BackgroundColor PaleGreen
+  BorderColor Black
+  FontName Arial
+}
+
+[*] --> Inactif
+
+state Inactif {
+  [*] --> ActivationSysteme
+  ActivationSysteme --> Actif : Activation du système
+}
+
+state Actif {
+  [*] --> Veille
+  Veille --> Alerte : Temps écoulé sans code saisi
+  Veille --> Actif : Code saisi à temps
+  Veille --> [*] : Interrupteur OFF
+  
+  state Alerte {
+    [*] --> AlerteActive
+    AlerteActive --> Actif : Désactivation de l'alerte (code correct saisi)
+  }
+  
+  Actif --> [*] : Désactivation du système
+}
+
+note right of Actif : Le système passe en veille après activation et attend une entrée de code
+note right of Alerte : Si pas de code saisi après un temps défini, une alerte est déclenchée
+@enduml

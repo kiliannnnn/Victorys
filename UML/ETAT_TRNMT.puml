@@ -1,0 +1,38 @@
+@startuml etat-tournoi
+skinparam backgroundColor LightYellow
+skinparam state {
+  StartColor MediumBlue
+  EndColor Red
+  BackgroundColor PaleGreen
+  BorderColor Black
+  FontName Arial
+}
+
+[*] --> En_Attente_Lancement
+
+state En_Attente_Lancement {
+  [*] --> Inscription_Ouverte
+  Inscription_Ouverte --> Cloturee : Heure de début atteinte
+}
+
+Cloturee --> En_Cours
+
+state En_Cours {
+  [*] --> Match_En_Cours
+  Match_En_Cours --> Match_Termine : Deux joueurs déclarent un résultat
+  Match_En_Cours --> Litige : Désaccord sur le résultat
+  Litige --> Resolution_Admin : Arbitrage administrateur
+  Resolution_Admin --> Match_Termine
+
+  Match_Termine --> Prochain_Match : Mise en file d'attente automatique
+  Prochain_Match --> Match_En_Cours
+}
+
+state Termine {
+  [*] --> Resultats_Publies
+}
+
+En_Cours --> Termine : Tous les matchs terminés
+Termine --> [*]
+
+@enduml

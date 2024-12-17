@@ -1,0 +1,52 @@
+@startuml ex2
+skinparam backgroundColor LightYellow
+skinparam state {
+  StartColor MediumBlue
+  EndColor Red
+  BackgroundColor PaleGreen
+  BorderColor Black
+  FontName Arial
+}
+
+[*] --> Off : Mise hors tension
+Off --> PowerOn : Mise sous tension
+
+state PowerOn {
+  PowerOn --> SelfTest : Effectuer le test d'auto-diagnostic
+}
+
+state SelfTest {
+  SelfTest --> OutOfService : Test échoué
+  SelfTest --> Idle : Test réussi
+}
+
+state Idle {
+  [*] --> WaitingForCard : Attente d'insertion de la carte
+  WaitingForCard --> ServingCustomer : Carte insérée
+}
+
+state ServingCustomer {
+  [*] --> AuthenticatingCustomer : Authentification du client
+  AuthenticatingCustomer --> TransactionSelection : Authentification réussie
+  AuthenticatingCustomer --> Idle : Annulation (retirer la carte)
+  
+  state TransactionSelection {
+    [*] --> ChoosingTransaction : Sélection de la transaction
+    ChoosingTransaction --> Transaction : Transaction choisie
+    ChoosingTransaction --> Idle : Annulation (retirer la carte)
+  }
+
+  state Transaction {
+    [*] --> ProcessingTransaction : Traitement de la transaction
+    ProcessingTransaction --> Idle : Transaction terminée
+    ProcessingTransaction --> Idle : Annulation (retirer la carte)
+  }
+
+  ServingCustomer --> Idle : Transaction terminée ou annulée
+}
+
+OutOfService --> [*] : Fin
+Idle --> [*] : Fin
+
+note right of ServingCustomer : EjectCard action libère la carte du client
+@enduml

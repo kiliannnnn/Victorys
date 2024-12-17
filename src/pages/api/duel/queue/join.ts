@@ -19,10 +19,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         user = data.user;
     }
     if (authError || !user) {
-        return new Response(
-            JSON.stringify({ message: "Invalid session" }),
-            { status: 401 }
-        );
+        return redirect('/signin');
     }
     // end user auth check
 

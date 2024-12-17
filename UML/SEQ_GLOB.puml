@@ -1,0 +1,40 @@
+@startuml "Diagramme de séquence - Workflow global"
+
+title Workflow global - Matchmaking et Tournoi
+
+participant Joueur1
+participant Joueur2
+participant Serveur
+participant Chat
+participant Paiement
+
+Joueur1 -> Serveur : Se connecter
+Serveur -> Chat : Initialiser session de chat
+
+Joueur1 -> Serveur : Rejoindre file d'attente
+Joueur2 -> Serveur : Rejoindre file d'attente
+Serveur -> Serveur : Matchmaking réussi
+Serveur -> Chat : Créer message duel
+
+Chat -> Joueur1 : Envoyer invitation duel
+Chat -> Joueur2 : Envoyer invitation duel
+
+Joueur1 -> Chat : Accepter duel
+Joueur2 -> Chat : Accepter duel
+Chat -> Serveur : Duel validé
+
+Serveur -> Joueur1 : Instructions (ajouter ami, valider étape)
+Joueur1 -> Chat : Valider étape ajout ami
+Joueur2 -> Chat : Valider étape ajout ami
+
+alt Duel terminé
+    Joueur1 -> Chat : Déclarer résultat
+    Joueur2 -> Chat : Déclarer résultat
+    Serveur -> Serveur : Valider résultat
+else Résultat en litige
+    Serveur -> Administrateur : Arbitrage nécessaire
+end
+
+Serveur -> Joueur1 : Afficher résultats
+Serveur -> Joueur2 : Afficher résultats
+@enduml
